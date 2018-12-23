@@ -1,10 +1,11 @@
 import discord
 from discord.ext import commands
 import os
+from cogs.mods.keys import Keys
 
 class Reyackrr(commands.Bot):
     def __init__(self):
-        self.token = "NDU3NjU0NjI4MzQzODczNTM3.Dv2UIA.PXz8TE1QqcGDj1gOu0a0_tMpAT8"
+        self.token = Keys.DISCORDTOKEN
         super().__init__(command_prefix="!!")
 
     def run(self, token=None):

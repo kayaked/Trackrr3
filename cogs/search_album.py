@@ -7,6 +7,7 @@ import cogs.mods.lastfm as lastfm
 import cogs.mods.itunes as itunes
 import cogs.mods.tidal as tidal
 import cogs.mods.spinrilla as spinrilla
+import cogs.mods.musicbrainz as musicbrainz
 
 class SearchAlbum:
 
@@ -72,6 +73,14 @@ class SearchAlbum:
     async def sa_spinrilla(self, ctx, *, album_name):
 
         album = await spinrilla.search_album(album_name)
+        embed = self.album_format(album)
+
+        await ctx.send(embed=embed)
+
+    @search_album.command(name='musicbrainz')
+    async def sa_musicbrainz(self, ctx, *, album_name):
+
+        album = await musicbrainz.search_album(album_name)
         embed = self.album_format(album)
 
         await ctx.send(embed=embed)

@@ -31,7 +31,7 @@ async def search_album(album_name):
     if 'error' in response:
         if response['error'] == 10:
             raise InvalidKey("Your last.fm API key is not valid.")
-        raise ClientError(f"Unknown error code {response['error']}")
+        raise NotFound(f"Unknown error code {response['error']}")
     
     results = response.get('results', {}).get('albummatches', {}).get('album', [])
 
