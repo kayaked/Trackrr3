@@ -23,8 +23,6 @@ async def search_album(album_name):
     async with aiohttp.ClientSession() as session:
         async with session.post(SpinrillaAPI.BASE + 'indexes/Album_production/query', params=SpinrillaAPI.AUTH, data=payload) as resp:
             response = await resp.json()
-
-    print(response)
     
     results = response.get('hits', [])
 
