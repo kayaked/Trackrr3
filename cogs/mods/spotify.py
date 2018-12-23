@@ -73,7 +73,7 @@ async def search_album(album_name):
         return tracks
     
     info = {"AlbumArtist": await album_artist(), "AlbumName": await get_album_name(), "AlbumCoverArt": await get_cover_art(), "URL": await get_url(), "TrackList": await track_list()}
-    return info
+    return SpotifyAlbum(info)
 
 
 class SpotifyAlbum(Album):
