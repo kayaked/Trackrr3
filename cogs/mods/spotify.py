@@ -1,7 +1,7 @@
 from pyfy import AsyncSpotify
 #from .keys import SPOTIFYSECRET, SPOTIFYCLIENT, SPOTIFYSCOPE, SPOTIFYNAME, SPOTIFYREDIRECTURL
 #from .base import Album
-from .base import Album
+from .base import *
 from .keys import Keys
 from datetime import datetime
 
@@ -26,7 +26,7 @@ async def authorize_spotify():
 async def search_song(song_name):
     spotify = await authorize_spotify()
     try:
-        spotify_search_query = spotify.search(song_name, types='track')
+        spotify_search_query = await spotify.search(song_name, types='track')
         track_selected = spotify_search_query['tracks']['items'][0]
     except IndexError:
         raise NotFound("No Results found for spotify")
