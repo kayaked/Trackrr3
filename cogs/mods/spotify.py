@@ -1,8 +1,8 @@
 from pyfy import AsyncSpotify
 #from .keys import SPOTIFYSECRET, SPOTIFYCLIENT, SPOTIFYSCOPE, SPOTIFYNAME, SPOTIFYREDIRECTURL
 #from .base import Album
-from base import Album
-from keys import Keys
+from .base import Album
+from .keys import Keys
 from datetime import datetime
 
 
@@ -18,7 +18,7 @@ async def authorize_spotify():
     client = ClientCreds(client_id=Keys.SPOTIFYCLIENT, client_secret=Keys.SPOTIFYSECRET)
     spotify = AsyncSpotify(client_creds=client)
     await spotify.authorize_client_creds()
-    return await spotify
+    return spotify
 
 
 
@@ -83,12 +83,12 @@ async def search_album(album_name):
         try:
             if album_release_date_type == "day":
                parsed_time = datetime.strptime(album_release_date, "%Y-%m-%d")
-               return parsed_time.strftime("%B %m, %Y")
+               return parsed_time
             elif album_release_date_type == "month":
                 parsed_time = datetime.strptime(album_release_date, "%Y-%m")
-                return parsed_time.strftime("%B %Y")
+                return parsed_time
             elif parsed_time == "year":
-                return album_release_date
+                return datetime.strptime(album_release_date, "%Y")
         except Exception:
             return "Unknown!"
 
@@ -100,6 +100,8 @@ async def search_album(album_name):
 class SpotifyAlbum(Album):
 
     def __init__(self, data:dict):
+        self.color = 0x84bd00
+        self.service = 'Spotify'
         self.name = data['AlbumName']
         self.artist = data['AlbumArtist']
         self.link = data['URL']
