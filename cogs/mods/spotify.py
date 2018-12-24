@@ -3,6 +3,7 @@ from pyfy import AsyncSpotify
 #from .base import Album
 from base import Album
 from keys import Keys
+from datetime import datetime
 
 
 # Ported from TrackrrV1-V2
@@ -71,8 +72,28 @@ async def search_album(album_name):
         for track in track_list:
             tracks.append(track['name'])
         return tracks
+
+
+    # The date the album was first released, for example “1981-12-15”. 
+    # Depending on the precision, it might be shown as “1981” or “1981-12”.
+    # The precision with which release_date value is known: “year” , “month” , or “day”.	
+    async def get_release_date():
+        album_release_date = album_selected['release_date']
+        album_release_date_type = album_selected['release_date_precision']
+        try:
+            if album_release_date_type == "day":
+               parsed_time = datetime.strptime(album_release_date, "%Y-%m-%d")
+               return parsed_time.strftime("%B %m, %Y")
+            elif album_release_date_type == "month":
+                parsed_time = datetime.strptime(album_release_date, "%Y-%m")
+                return parsed_time.strftime("%B %Y")
+            elif parsed_time == "year":
+                return album_release_date
+        except Exception:
+            return "Unknown!"
+
     
-    info = {"AlbumArtist": await album_artist(), "AlbumName": await get_album_name(), "AlbumCoverArt": await get_cover_art(), "URL": await get_url(), "TrackList": await track_list()}
+    info = {"AlbumArtist": await album_artist(), "AlbumName": await get_album_name(), "AlbumCoverArt": await get_cover_art(), "URL": await get_url(), "TrackList": await track_list(), "ReleaseDate": await get_release_date()}
     return SpotifyAlbum(info)
 
 
@@ -84,3 +105,4 @@ class SpotifyAlbum(Album):
         self.link = data['URL']
         self.track_list = data['TrackList']
         self.cover_url = data['AlbumCoverArt']
+        self.release_date = data['ReleaseDate']
