@@ -24,12 +24,13 @@ async def search_album(album_name):
             tracklist_resp = json.loads(tracklist_resp.strip())
             tracklist_resp = tracklist_resp.get('results', [])
         form['track_list'] = tracklist = [i.get('trackName', '') for i in tracklist_resp if i.get('wrapperType', '')=="track"]
-    print(form)
     return iTunesAlbum(form)
 
 class iTunesAlbum(Album):
 
     def __init__(self, data:dict):
+        self.color = 0xe98def
+        self.service = 'iTunes'
         self.name = data.get('collectionName', '')
         self.artist = data.get('artistName', 'N/A')
         self.link = data.get('collectionViewUrl', 'https://genius.com/')

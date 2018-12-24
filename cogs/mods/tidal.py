@@ -43,10 +43,11 @@ async def search_album(album_name):
 class TidalAlbum(Album):
 
     def __init__(self, data:dict):
+        self.color = 0x002156
+        self.service = 'Tidal'
         self.name = data.get('title', 'N/A')
         self.artist = data.get('artist', {}).get('name', 'N/A')
-        self.link = data.get('url', 'https://genius.com/')
+        self.link = data.get('url', 'https://tidal.com/')
         self.track_list = data.get('track_list', [])
         self.cover_url = 'https://resources.tidal.com/images/' + data.get('cover').replace('-', '/') + '/1280x1280.jpg'
-        print(self.cover_url)
-        self.release_date = datetime.strptime(data.get('release_date', '1970-01-01'), '%Y-%m-%d')
+        self.release_date = datetime.strptime(data.get('releaseDate', '1970-01-01'), '%Y-%m-%d')

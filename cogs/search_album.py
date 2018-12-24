@@ -8,6 +8,7 @@ import cogs.mods.itunes as itunes
 import cogs.mods.tidal as tidal
 import cogs.mods.spinrilla as spinrilla
 import cogs.mods.musicbrainz as musicbrainz
+import cogs.mods.deezer as deezer
 
 class SearchAlbum:
 
@@ -20,12 +21,15 @@ class SearchAlbum:
 
     def album_format(self, album):
 
-        embed = discord.Embed(title=str(album.name), url=album.link)
+        embed = discord.Embed(title=str(album.name), url=album.link, color=discord.Color(getattr(album, 'color', 0)))
+        if [emoji for emoji in self.bot.emojis if emoji.name == getattr(album, 'service', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa').lower()]:
+            emoji = [emoji for emoji in self.bot.emojis if emoji.name == album.service.lower()][0]
+            embed.title = embed.title + f' <:{emoji.name}:{emoji.id}>'
         embed.add_field(name='Name', value=album.name, inline=False)
         embed.add_field(name='Artist(s)', value=album.artist, inline=False)
+        embed.add_field(name='Released', value=album.release_date.strftime('%B %-d, %Y'), inline=False)
         embed.add_field(name='Track List', value='\n'.join(album.track_list).replace('*', r'\*') if album.track_list else 'Unknown', inline=False)
         embed.set_thumbnail(url=album.cover_url)
-        embed.set_footer(text=album.__class__.__name__)
 
         return embed
 
@@ -81,6 +85,14 @@ class SearchAlbum:
     async def sa_musicbrainz(self, ctx, *, album_name):
 
         album = await musicbrainz.search_album(album_name)
+        embed = self.album_format(album)
+
+        await ctx.send(embed=embed)
+
+    @search_album.command(name='deezer')
+    async def sa_deezer(self, ctx, *, album_name):
+
+        album = await deezer.search_album(album_name)
         embed = self.album_format(album)
 
         await ctx.send(embed=embed)

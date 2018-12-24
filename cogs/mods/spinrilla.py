@@ -40,6 +40,8 @@ async def search_album(album_name):
 class SpinrillaAlbum(Album):
 
     def __init__(self, data:dict):
+        self.color = 0x460856
+        self.service = 'Spinrilla'
         self.name = data.get('title', 'N/A')
         self.artist = ', '.join([artist['display_name'] for artist in data.get('artist', [])])
         self.link = data.get('url', 'http://spinrilla.com/')

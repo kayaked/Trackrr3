@@ -22,7 +22,6 @@ async def search_album(album_name):
             raise NotFound
         hit = hits[0].get('result', {}).get('id', 0)
 
-
         async with session.get(GeniusAPI.BASE + f'/albums/{hit}') as resp:
             resp2_json = await resp.json()
 
@@ -38,6 +37,8 @@ async def search_album(album_name):
 class GeniusAlbum(Album):
 
     def __init__(self, data:dict):
+        self.color = 0xffff00
+        self.service = 'Genius'
         self.name = data.get('name', '')
         self.artist = data.get('artist', {}).get('name', 'N/A')
         self.link = data.get('url', 'https://genius.com/')

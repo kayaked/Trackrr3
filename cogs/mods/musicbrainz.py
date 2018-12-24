@@ -37,9 +37,9 @@ async def search_album(album_name):
 
     _id = results.get('releases', [])
     results['track_list'] = []
-    results['cover'] = ''
+    results['cover'] = 'https://cdn.shopify.com/s/files/1/2009/8293/products/ZM1650.jpg?v=1515009062'
     if _id:
-
+        image_resp = {}
         async with aiohttp.ClientSession() as session:
             for rel in _id:
                 async with session.get(MusicBrainzAPI.COVERBASE + rel.get("id", "unknown")) as resp:
@@ -54,15 +54,15 @@ async def search_album(album_name):
             async with session.get(MusicBrainzAPI.BASE + f'release/{_id[0].get("id", "unknown")}', params=params) as resp:
                 response = await resp.json()
 
-        image = image_resp.get('images', [])
-        if image:
-            results['cover']=image[0].get('image', '')
-            async with aiohttp.ClientSession() as session:
-                async with session.get(results['cover'], allow_redirects=False) as resp:
-                    download_url = resp.headers['location']
-                async with session.get(download_url, allow_redirects=False) as resp:
-                    results['cover'] = resp.headers['location']
-            print(results['cover'])
+        if image_resp:
+            image = image_resp.get('images', [])
+            if image:
+                results['cover']=image[0].get('image', '')
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(results['cover'], allow_redirects=False) as resp:
+                        download_url = resp.headers['location']
+                    async with session.get(download_url, allow_redirects=False) as resp:
+                        results['cover'] = resp.headers['location']
         
         if 'error' in response:
             raise NotFound(response['error'])
@@ -77,6 +77,8 @@ async def search_album(album_name):
 class MBAlbum(Album):
 
     def __init__(self, data:dict):
+        self.color = 0x963873
+        self.service = 'MusicBrainz'
         self.name = data.get('title', 'N/A')
         self.artist = ', '.join([artist.get('artist', {}).get('name', '') for artist in data.get('artist-credit', [])]) if data.get('artist-credit') else 'N/A'
         self.link = data.get('url', 'https://musicbrainz.org/')

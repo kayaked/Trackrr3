@@ -13,7 +13,6 @@ class NotFound(Exception):
 
 async def _fetch(method, **kw):
     params = {**kw, 'method':method, 'format':'json', 'api_key':lfmAPI.KEY}
-    print(params, urllib.parse.urlencode(params))
     async with aiohttp.ClientSession() as session:
         async with session.get(lfmAPI.BASE + "?" + urllib.parse.urlencode(params).replace('+', '%20')) as apir:
             response = await apir.json()
@@ -49,6 +48,8 @@ async def search_album(album_name):
 class LFMAlbum(Album):
 
     def __init__(self, data:dict):
+        self.color = 0x7c0000
+        self.service = 'LastFM'
         self.name = data.get('name', '')
         self.artist = data.get('artist', 'N/A')
         self.link = data.get('url', 'https://genius.com/')
