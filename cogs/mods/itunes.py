@@ -35,5 +35,5 @@ class iTunesAlbum(Album):
         self.artist = data.get('artistName', 'N/A')
         self.link = data.get('collectionViewUrl', 'https://genius.com/')
         self.track_list = data.get('track_list')
-        self.cover_url = data.get('artworkUrl100', 'https://cdn.shopify.com/s/files/1/2009/8293/products/ZM1650.jpg?v=1515009062').replace('100x100', '1000x1000')
+        self.cover_url = data.get('artworkUrl100', 'https://cdn.shopify.com/s/files/1/2009/8293/products/ZM1650.jpg?v=1515009062').replace('100x100', '400x400')
         self.release_date = datetime.strptime(data.get('releaseDate', '1970-01-01T00:00:00Z'), "%Y-%m-%dT%H:%M:%SZ")

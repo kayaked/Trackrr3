@@ -9,19 +9,38 @@ import cogs.mods.tidal as tidal
 import cogs.mods.spinrilla as spinrilla
 import cogs.mods.musicbrainz as musicbrainz
 import cogs.mods.deezer as deezer
+import cogs.mods.mixtapemonkey as mixtapemonkey
+import datetime
 
 class SearchAlbum:
 
     def __init__(self, bot):
         self.bot = bot
+        self.services = [
+            'tidal',
+            'lastfm',
+            'mixtapemonkey',
+            'musicbrainz',
+            'soundcloud',
+            'spinrilla',
+            'spotify',
+            'deezer',
+            'genius',
+            'itunes'
+        ]
 
     @commands.group(name='search_album', invoke_without_command=True)
-    async def search_album(self, ctx):
-        await ctx.send(f'`{", ".join([cmd.name for cmd in ctx.command.commands])}`')
+    async def search_album(self, ctx, *, album_name=''):
+        if not album_name or album_name.split(' ')[0].lower() not in self.services:
+            return await ctx.send(f'`{", ".join(self.services)}`')
+
+        album = await globals().get(album_name.split(' ')[0].lower()).search_album(' '.join(album_name.split(' ')[1:]))
+        embed = self.album_format(album)
+        embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
+        await ctx.send(embed=embed)
 
     def album_format(self, album):
-
-        embed = discord.Embed(title=str(album.name), url=album.link, color=discord.Color(getattr(album, 'color', 0)))
+        embed = discord.Embed(title=str(album.name), url=album.link, color=discord.Color(getattr(album, 'color', 0)), timestamp=datetime.datetime.today())
         if [emoji for emoji in self.bot.emojis if emoji.name == getattr(album, 'service', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa').lower()]:
             emoji = [emoji for emoji in self.bot.emojis if emoji.name == album.service.lower()][0]
             embed.title = embed.title + f' <:{emoji.name}:{emoji.id}>'
@@ -32,70 +51,6 @@ class SearchAlbum:
         embed.set_thumbnail(url=album.cover_url)
 
         return embed
-
-    @search_album.command(name='genius')
-    async def sa_genius(self, ctx, *, album_name):
-
-        album = await genius.search_album(album_name)
-        embed = self.album_format(album)
-
-        await ctx.send(embed=embed)
-
-    @search_album.command(name='soundcloud')
-    async def sa_soundcloud(self, ctx, *, album_name):
-
-        album = await soundcloud.search_album(album_name)
-        embed = self.album_format(album)
-
-        await ctx.send(embed=embed)
-
-    @search_album.command(name='lastfm')
-    async def sa_lastfm(self, ctx, *, album_name):
-
-        album = await lastfm.search_album(album_name)
-        embed = self.album_format(album)
-
-        await ctx.send(embed=embed)
-
-    @search_album.command(name='itunes')
-    async def sa_itunes(self, ctx, *, album_name):
-
-        album = await itunes.search_album(album_name)
-        embed = self.album_format(album)
-
-        await ctx.send(embed=embed)
-
-    @search_album.command(name='tidal')
-    async def sa_tidal(self, ctx, *, album_name):
-
-        album = await tidal.search_album(album_name)
-        embed = self.album_format(album)
-
-        await ctx.send(embed=embed)
-
-    @search_album.command(name='spinrilla')
-    async def sa_spinrilla(self, ctx, *, album_name):
-
-        album = await spinrilla.search_album(album_name)
-        embed = self.album_format(album)
-
-        await ctx.send(embed=embed)
-
-    @search_album.command(name='musicbrainz')
-    async def sa_musicbrainz(self, ctx, *, album_name):
-
-        album = await musicbrainz.search_album(album_name)
-        embed = self.album_format(album)
-
-        await ctx.send(embed=embed)
-
-    @search_album.command(name='deezer')
-    async def sa_deezer(self, ctx, *, album_name):
-
-        album = await deezer.search_album(album_name)
-        embed = self.album_format(album)
-
-        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(SearchAlbum(bot))
