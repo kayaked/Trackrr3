@@ -40,5 +40,5 @@ class GeniusAlbum(Album):
         self.artist = data.get('artist', {}).get('name', 'N/A')
         self.link = data.get('url', 'https://genius.com/')
         self.track_list = data.get('track_list')
-        self.cover_url = data.get('cover_art_url')
+        self.cover_url = data.get('cover_art_url', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
         self.release_date = datetime.strptime(data.get('release_date', '1970-01-01'), '%Y-%m-%d')

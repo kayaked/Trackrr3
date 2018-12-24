@@ -7,6 +7,7 @@ class Reyackrr(commands.Bot):
     def __init__(self):
         self.token = Keys.DISCORDTOKEN
         super().__init__(command_prefix="!!")
+        self.remove_command('help')
 
     def run(self, token=None):
         if not token: token=self.token

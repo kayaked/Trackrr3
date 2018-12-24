@@ -41,5 +41,5 @@ class SoundCloudAlbum(Album):
         self.artist = data.get('user', {}).get('username', 'N/A')
         self.link = data.get('permalink_url', 'https://soundcloud.com/')
         self.track_list = data.get('track_list')
-        self.cover_url = data.get('artwork_url').replace('large', 't500x500') if data.get('artwork_url') != None else data.get('track_list_raw', [])[0].get('artwork_url', 'https://cdn.shopify.com/s/files/1/2009/8293/products/ZM1650.jpg?v=1515009062').replace('large', 't500x500') if data.get('tracks') else ""
+        self.cover_url = data.get('artwork_url').replace('large', 't500x500') if data.get('artwork_url') != None else data.get('track_list_raw', [])[0].get('artwork_url', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true').replace('large', 't500x500') if data.get('tracks') else ""
         self.release_date = datetime.strptime(data.get('created_at', '1970-01-01T00:00:00Z'), "%Y-%m-%dT%H:%M:%SZ")
