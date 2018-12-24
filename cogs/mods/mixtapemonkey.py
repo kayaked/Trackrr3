@@ -23,7 +23,12 @@ async def search_album(album_name):
     
     soup = bs4.BeautifulSoup(response, 'html.parser')
 
-    result = soup.find('a')
+    result = [a for a in soup.find_all('a') if '/artist/' not in a['href']]
+
+    if not result:
+        raise NotFound
+
+    result=result[0]
 
     hits = {}
 
@@ -49,6 +54,5 @@ class MonkeyAlbum(Album):
         self.artist = data.get('artist', 'N/A')
         self.link = data.get('link', 'https://mixtapemonkey.com/')
         self.track_list = data.get('track_list', [])
-        self.cover_url = data.get('cover_url', 'https://cdn.shopify.com/s/files/1/2009/8293/products/ZM1650.jpg?v=1515009062').replace('_thumb', '')
-        print(self.cover_url)
+        self.cover_url = data.get('cover_url', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true').replace('_thumb', '')
         self.release_date = datetime.strptime(data.get('release_date', '1970'), '%Y')

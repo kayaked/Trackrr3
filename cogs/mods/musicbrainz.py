@@ -34,7 +34,7 @@ async def search_album(album_name):
 
     _id = results.get('releases', [])
     results['track_list'] = []
-    results['cover'] = 'https://cdn.shopify.com/s/files/1/2009/8293/products/ZM1650.jpg?v=1515009062'
+    results['cover'] = 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true'
     if _id:
         image_resp = {}
         async with aiohttp.ClientSession() as session:

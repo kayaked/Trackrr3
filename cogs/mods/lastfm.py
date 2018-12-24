@@ -51,5 +51,5 @@ class LFMAlbum(Album):
         self.artist = data.get('artist', 'N/A')
         self.link = data.get('url', 'https://genius.com/')
         self.track_list = data.get('track_list')
-        self.cover_url = data.get('image', [])[-1].get('#text', 'https://cdn.shopify.com/s/files/1/2009/8293/products/ZM1650.jpg?v=1515009062')
+        self.cover_url = data.get('image', [])[-1].get('#text', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
         self.release_date = datetime.today()

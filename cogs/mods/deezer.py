@@ -44,5 +44,5 @@ class DeezerAlbum(Album):
         self.artist = [artist.get('name', '') for artist in data.get('contributors', [])] if data.get('contributors') else 'N/A'
         self.link = data.get('link', 'https://deezer.com/')
         self.track_list = data.get('track_list', [])
-        self.cover_url = data.get('cover_xl') if data.get('cover_xl') else 'https://cdn.shopify.com/s/files/1/2009/8293/products/ZM1650.jpg?v=1515009062'
+        self.cover_url = data.get('cover_xl') if data.get('cover_xl') else 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true'
         self.release_date = datetime.strptime(data.get('release_date', '1970-01-01'), '%Y-%m-%d')

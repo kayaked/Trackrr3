@@ -30,7 +30,7 @@ async def search_album(album_name):
     hits['name'] = results.find('a', {'class':'title'}).text.strip()
     hits['link'] = PlayAPI.BASE + results.find('a', {'class':'card-click-target'}).get('href', '/store/')
     hits['artist'] = results.find('a', {'class':'subtitle'}).text.strip()
-    hits['cover_url'] = results.find('img', {'class':'cover-image'}).get('src', 'https://cdn.shopify.com/s/files/1/2009/8293/products/ZM1650.jpg?v=1515009062')
+    hits['cover_url'] = results.find('img', {'class':'cover-image'}).get('src', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
 
     async with aiohttp.ClientSession() as session:
         print(hits['link'])
@@ -55,7 +55,7 @@ class PlayAlbum(Album):
         self.service = 'Play'
         self.name = data.get('name', 'N/A')
         self.artist = data.get('artist', 'N/A')
-        self.link = data.get('link', 'https://tidal.com/')
+        self.link = data.get('link', 'https://play.google.com/')
         self.track_list = data.get('track_list', [])
         self.cover_url = data.get('cover_url')
         self.release_date = datetime.strptime(data.get('release_date', 'January 1, 1970'), '%B %d, %Y')
