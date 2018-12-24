@@ -10,6 +10,8 @@ import cogs.mods.spinrilla as spinrilla
 import cogs.mods.musicbrainz as musicbrainz
 import cogs.mods.deezer as deezer
 import cogs.mods.mixtapemonkey as mixtapemonkey
+import cogs.mods.playmusic as playmusic
+import cogs.mods.spotify as spotify
 import cogs.mods.base as base
 import datetime
 
@@ -27,7 +29,9 @@ class SearchAlbum:
             'spotify',
             'deezer',
             'genius',
-            'itunes'
+            'itunes',
+            'playmusic',
+            'spotify'
         ]
 
     @commands.group(name='search_album', invoke_without_command=True)
