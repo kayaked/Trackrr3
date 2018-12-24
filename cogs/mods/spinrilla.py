@@ -1,5 +1,5 @@
 import aiohttp
-from .base import Album
+from .base import *
 from datetime import datetime
 import urllib.parse
 from .keys import Keys
@@ -9,9 +9,6 @@ import bs4
 class SpinrillaAPI:
     BASE = Keys.SPINRILLA_BASE
     AUTH = Keys.SPINRILLA_KEY_ID_AGENT
-
-class NotFound(Exception):
-    pass
 
 async def search_album(album_name):
     payload = json.dumps({

@@ -1,5 +1,5 @@
 import aiohttp
-from .base import Album
+from .base import *
 from datetime import datetime
 import urllib.parse
 import bs4
@@ -9,9 +9,6 @@ import re
 
 class MonkeyAPI:
     BASE = 'https://mixtapemonkey.com'
-
-class NotFound(Exception):
-    pass
 
 async def search_album(album_name):
     params = {

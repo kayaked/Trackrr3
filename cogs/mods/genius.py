@@ -1,12 +1,9 @@
 import aiohttp
-from .base import Album
+from .base import *
 from datetime import datetime
 
 class GeniusAPI:
     BASE = 'https://genius.com/api'
-
-class NotFound(Exception):
-    pass
 
 async def search_album(album_name):
 

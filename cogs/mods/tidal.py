@@ -1,5 +1,5 @@
 import aiohttp
-from .base import Album
+from .base import *
 from datetime import datetime
 import urllib.parse
 from .keys import Keys
@@ -9,9 +9,6 @@ from .keys import Keys
 class TidalAPI:
     BASE = 'https://api.tidalhifi.com/v1/'
     KEY = Keys.TIDAL
-
-class NotFound(Exception):
-    pass
 
 async def search_album(album_name):
     params = {

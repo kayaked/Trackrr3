@@ -1,5 +1,5 @@
 import aiohttp
-from .base import Album
+from .base import *
 from datetime import datetime
 import urllib.parse
 from .keys import Keys
@@ -7,9 +7,6 @@ from .keys import Keys
 class MusicBrainzAPI:
     BASE = 'https://musicbrainz.org/ws/2/'
     COVERBASE = 'http://coverartarchive.org/release/'
-
-class NotFound(Exception):
-    pass
 
 async def search_album(album_name):
     params = {

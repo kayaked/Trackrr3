@@ -1,14 +1,11 @@
 import aiohttp
-from .base import Album
+from .base import *
 from datetime import datetime
 import urllib.parse
 import json
 
 class itunesAPI:
     BASE = 'https://itunes.apple.com'
-
-class NotFound(Exception):
-    pass
 
 async def search_album(album_name):
     async with aiohttp.ClientSession() as session:

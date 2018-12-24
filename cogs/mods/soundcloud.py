@@ -1,14 +1,11 @@
 import aiohttp
-from .base import Album
+from .base import *
 from datetime import datetime
 from .keys import Keys
 
 class SoundCloudAPI:
     BASE = 'https://api-v2.soundcloud.com'
     TOKEN = Keys.SOUNDCLOUD
-
-class NotFound(Exception):
-    pass
 
 async def search_album(album_name):
     async with aiohttp.ClientSession() as session:

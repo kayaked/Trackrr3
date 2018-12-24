@@ -1,5 +1,5 @@
 import aiohttp
-from .base import Album
+from .base import *
 from datetime import datetime
 import urllib.parse
 from .keys import Keys
@@ -7,9 +7,6 @@ from .keys import Keys
 class lfmAPI:
     BASE = 'http://ws.audioscrobbler.com/2.0/'
     KEY = Keys.LASTFM
-
-class NotFound(Exception):
-    pass
 
 async def _fetch(method, **kw):
     params = {**kw, 'method':method, 'format':'json', 'api_key':lfmAPI.KEY}

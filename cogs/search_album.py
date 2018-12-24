@@ -10,6 +10,7 @@ import cogs.mods.spinrilla as spinrilla
 import cogs.mods.musicbrainz as musicbrainz
 import cogs.mods.deezer as deezer
 import cogs.mods.mixtapemonkey as mixtapemonkey
+import cogs.mods.base as base
 import datetime
 
 class SearchAlbum:
@@ -31,10 +32,14 @@ class SearchAlbum:
 
     @commands.group(name='search_album', invoke_without_command=True)
     async def search_album(self, ctx, *, album_name=''):
-        if not album_name or album_name.split(' ')[0].lower() not in self.services:
+        svc = album_name.split(' ')[0].lower()
+        if not album_name or svc not in self.services:
             return await ctx.send(f'`{", ".join(self.services)}`')
 
-        album = await globals().get(album_name.split(' ')[0].lower()).search_album(' '.join(album_name.split(' ')[1:]))
+        try:
+            album = await globals().get(svc).search_album(' '.join(album_name.split(' ')[1:]))
+        except base.NotFound:
+            return await ctx.send(f'Result not found on {svc}!')
         embed = self.album_format(album)
         embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
         await ctx.send(embed=embed)
