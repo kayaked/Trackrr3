@@ -20,12 +20,12 @@ async def search_album(album_name):
     # Finds the results panel with Albums
     panels = [panel for panel in soup.find_all('div', {'class':'id-cluster-container cluster-container cards-transition-enabled'}) if 'Albums' in getattr(panel, 'text', '')]
     if not panels:
-        return NotFound
+        raise NotFound
     # Gets the first result
     panel = panels[0].find('div', {'class':'id-card-list card-list two-cards'})
     results = list(getattr(panel, 'children', []))
     if not results:
-        return NotFound
+        raise NotFound
     
     results = results[0]
 
@@ -57,7 +57,7 @@ class PlayAlbum(Album):
 
     def __init__(self, data:dict):
         self.color = 0xeeeeee
-        self.service = 'Play'
+        self.service = 'GooglePlay'
         self.name = data.get('name', 'N/A')
         self.artist = data.get('artist', 'N/A')
         self.link = data.get('link', 'https://play.google.com/')

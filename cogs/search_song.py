@@ -9,7 +9,7 @@ import cogs.mods.tidal as tidal
 import cogs.mods.spinrilla as spinrilla
 import cogs.mods.musicbrainz as musicbrainz
 import cogs.mods.deezer as deezer
-import cogs.mods.playmusic as playmusic
+import cogs.mods.googleplay as googleplay
 import cogs.mods.spotify as spotify
 import cogs.mods.amazon as amazon
 import cogs.mods.base as base
@@ -35,7 +35,12 @@ class SearchAlbum:
     async def search_song(self, ctx, *, album_name=''):
         svc = album_name.split(' ')[0].lower()
         if not album_name or svc not in self.services:
-            embed = discord.Embed(title=f'List of available services for {self.bot.command_prefix}search_song', description='\n'.join(self.services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
+            services = self.services
+            for service in services:
+                if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
+                    emoji = [emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0]
+                    services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + service
+            embed = discord.Embed(title=f'List of available services for {self.bot.command_prefix}search_song', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
             embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
             return await ctx.send(embed=embed)
 
