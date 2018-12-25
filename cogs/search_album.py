@@ -13,6 +13,7 @@ import cogs.mods.mixtapemonkey as mixtapemonkey
 import cogs.mods.playmusic as playmusic
 import cogs.mods.spotify as spotify
 import cogs.mods.base as base
+import cogs.mods.amazon as amazon
 import datetime
 import random
 
@@ -32,7 +33,8 @@ class SearchAlbum:
             'genius',
             'itunes',
             'playmusic',
-            'spotify'
+            'spotify',
+            'amazon'
         ]
 
     @commands.group(name='search_album', invoke_without_command=True)

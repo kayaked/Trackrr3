@@ -11,6 +11,7 @@ import cogs.mods.musicbrainz as musicbrainz
 import cogs.mods.deezer as deezer
 import cogs.mods.playmusic as playmusic
 import cogs.mods.spotify as spotify
+import cogs.mods.amazon as amazon
 import cogs.mods.base as base
 import datetime
 import random
@@ -26,7 +27,8 @@ class SearchAlbum:
             'deezer',
             'soundcloud',
             'genius',
-            'lastfm'
+            'lastfm',
+            'amazon'
         ]
 
     @commands.group(name='search_song', invoke_without_command=True, aliases=['search_track', 'song', 'track'])
