@@ -15,6 +15,7 @@ import cogs.mods.spotify as spotify
 import cogs.mods.base as base
 import cogs.mods.amazon as amazon
 import cogs.mods.bandcamp as bandcamp
+import copy
 import datetime
 import random
 
@@ -43,7 +44,7 @@ class SearchAlbum:
     async def search_album(self, ctx, *, album_name=''):
         svc = album_name.split(' ')[0].lower()
         if not album_name or svc not in self.services:
-            services = self.services
+            services = copy.deepcopy(self.services)
             for service in services:
                 if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
                     emoji = [emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0]

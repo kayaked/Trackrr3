@@ -51,7 +51,8 @@ async def search_song(song_name):
     payload = AmazonKeys.PAYLOAD
     payload['query']['must'][0]['query'] = song_name
     async with aiohttp.ClientSession() as session:
-        async with session.post(AmazonKeys.BASE + 'search/v1_1', headers=AmazonKeys.HEADERS, json=payload, timeout=5) as resp:
+        async with session.post(AmazonKeys.BASE + 'search/v1_1/', headers=AmazonKeys.HEADERS, json=payload, timeout=5) as resp:
+            print(resp)
             response = await resp.json()
 
     results = [result for result in response.get('results') if result.get('label', '') == 'catalog_tracks']
