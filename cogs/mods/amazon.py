@@ -20,12 +20,12 @@ async def search_album(album_name):
     results = [result for result in response.get('results') if result.get('label', '') == 'catalog_albums']
 
     if not results:
-        return NotFound
+        raise NotFound
 
     hits = results[0].get('hits', [])
 
     if not hits:
-        return NotFound
+        raise NotFound
 
     hit = hits[0].get('document', {})
 
