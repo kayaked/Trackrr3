@@ -14,7 +14,7 @@ async def search_album(album_name):
     # This uses the v2 of the soundcloud API, which is not currently documented. Feel free to look at and use this code's URLs for your soundcloud utility.
     async with aiohttp.ClientSession() as session:
         if album_name.startswith("id:") and album_name[3:].strip().isdigit():
-            params = {'client_id':SoundCloudAPI.TOKEN,'limit':'1'}
+            params = {'client_id':SoundCloudAPI.TOKEN,'limit':'25'}
             async with session.get(f"{SoundCloudAPI.BASE}/playlists/{album_name[3:].strip()}", params=params) as resp:
                 try:
                     form = await resp.json()
@@ -29,6 +29,7 @@ async def search_album(album_name):
                     form=form['collection'][0]
                 except IndexError:
                     raise NotFound
+            params['limit'] = '25'
             async with session.get(form['uri'], params=params) as resp:
                 track_list = await resp.json()
                 form['track_list'] = [track.get('title', '') for track in track_list.get('tracks', [])]
