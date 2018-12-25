@@ -20,11 +20,13 @@ class SearchAlbum:
     def __init__(self, bot):
         self.bot = bot
         self.services = [
-            'spotify'
+            'spotify',
+            'spinrilla',
+            'tidal'
         ]
 
     @commands.group(name='search_song', invoke_without_command=True, aliases=['search_track', 'song', 'track'])
-    async def search_album(self, ctx, *, album_name=''):
+    async def search_song(self, ctx, *, album_name=''):
         svc = album_name.split(' ')[0].lower()
         if not album_name or svc not in self.services:
             embed = discord.Embed(title=f'List of available services for {self.bot.command_prefix}search_song', description='\n'.join(self.services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
