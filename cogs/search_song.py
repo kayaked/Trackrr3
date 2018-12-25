@@ -12,11 +12,13 @@ import cogs.mods.deezer as deezer
 import cogs.mods.googleplay as googleplay
 import cogs.mods.spotify as spotify
 import cogs.mods.amazon as amazon
+import cogs.mods.pandora as pandora
 import cogs.mods.base as base
 import datetime
 import random
 import io
 from mutagen import id3
+import copy
 
 class SearchAlbum:
 
@@ -31,14 +33,15 @@ class SearchAlbum:
             'genius',
             'lastfm',
             'amazon',
-            'itunes'
+            'itunes',
+            'pandora'
         ]
 
     @commands.group(name='search_song', invoke_without_command=True, aliases=['search_track', 'song', 'track'])
     async def search_song(self, ctx, *, album_name='a'):
         svc = album_name.split(' ')[0].lower()
         if not album_name or svc not in self.services:
-            services = self.services
+            services = copy.deepcopy(self.services)
             for service in services:
                 if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
                     emoji = [emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0]
