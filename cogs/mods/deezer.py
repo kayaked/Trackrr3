@@ -34,6 +34,7 @@ async def search_album(album_name):
         async with session.get(DeezerAPI.BASE + f'/album/{results.get("id", 0)}', params=params) as resp:
             response = await resp.json()
     responsetr = response.get('tracks', {}).get('data', [])
+    results['contributors'] = response.get('contributors', [])
     results['track_list'] = [ tr.get('title', '') for tr in responsetr ]
     results['release_date'] = response.get('release_date', '1970-01-01')
     return DeezerAlbum(results)
@@ -44,7 +45,7 @@ class DeezerAlbum(Album):
         self.color = 0x222222
         self.service = 'Deezer'
         self.name = data.get('title', 'N/A')
-        self.artist = [artist.get('name', '') for artist in data.get('contributors', [])] if data.get('contributors') else 'N/A'
+        self.artist = ', '.join([artist.get('name', '') for artist in data.get('contributors', [])]) if data.get('contributors') else 'N/A'
         self.link = data.get('link', 'https://deezer.com/')
         self.track_list = data.get('track_list', [])
         self.cover_url = data.get('cover_xl') if data.get('cover_xl') else 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true'
