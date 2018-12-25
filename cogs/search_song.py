@@ -22,7 +22,8 @@ class SearchAlbum:
         self.services = [
             'spotify',
             'spinrilla',
-            'tidal'
+            'tidal',
+            'deezer'
         ]
 
     @commands.group(name='search_song', invoke_without_command=True, aliases=['search_track', 'song', 'track'])
