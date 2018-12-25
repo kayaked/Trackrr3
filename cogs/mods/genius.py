@@ -60,8 +60,6 @@ async def search_song(song_name):
 
         hits = resp2_json.get('response', {}).get('song', {})
 
-        print(hits, hit)
-
         return GeniusSong(hits)
 
 class GeniusAlbum(Album):
