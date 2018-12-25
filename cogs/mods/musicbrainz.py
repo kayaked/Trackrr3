@@ -9,6 +9,7 @@ class MusicBrainzAPI:
     COVERBASE = 'http://coverartarchive.org/release/'
 
 async def search_album(album_name):
+    """ MusicBrainz album searcher. """
     params = {
         'query': album_name,
         'fmt': 'json'

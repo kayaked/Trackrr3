@@ -5,12 +5,13 @@ import urllib.parse
 import bs4
 import re
 
-# Tidal you are stoopid
+# MM Does not actually support track search RIP
 
 class MonkeyAPI:
     BASE = 'https://mixtapemonkey.com'
 
 async def search_album(album_name):
+    """ MixtapeMonkey Album Searching. """
     params = {
         'name': album_name
     }

@@ -1,4 +1,4 @@
-from pyfy import AsyncSpotify
+from pyfy import AsyncSpotify, ClientCreds
 #from .keys import SPOTIFYSECRET, SPOTIFYCLIENT, SPOTIFYSCOPE, SPOTIFYNAME, SPOTIFYREDIRECTURL
 #from .base import Album
 from .base import *
@@ -16,7 +16,6 @@ class SpotifyError(Exception):
 
 async def authorize_spotify():
     """ Authoirzies Spotify using PyFy's Method """
-    from pyfy import ClientCreds
     client = ClientCreds(client_id=Keys.SPOTIFYCLIENT, client_secret=Keys.SPOTIFYSECRET)
     spotify = AsyncSpotify(client_creds=client)
     await spotify.authorize_client_creds()
@@ -24,6 +23,7 @@ async def authorize_spotify():
 
 
 async def search_song(song_name):
+    """ Searches a track by name on the official Spotify API using PyFy."""
     spotify = await authorize_spotify()
     try:
         spotify_search_query = await spotify.search(song_name, types='track')
@@ -110,6 +110,7 @@ async def search_song(song_name):
 
 
 async def search_album(album_name):
+    """ Searches/finds an album by name on Spotify using PyFy. """
     spotify = await authorize_spotify()
     try:
         spotify_album_query = await spotify.search(album_name, types="album")

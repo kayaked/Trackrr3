@@ -10,10 +10,12 @@ import cogs.mods.spinrilla as spinrilla
 import cogs.mods.musicbrainz as musicbrainz
 import cogs.mods.deezer as deezer
 import cogs.mods.mixtapemonkey as mixtapemonkey
-import cogs.mods.playmusic as playmusic
+import cogs.mods.googleplay as googleplay
 import cogs.mods.spotify as spotify
 import cogs.mods.base as base
+import cogs.mods.amazon as amazon
 import datetime
+import random
 
 class SearchAlbum:
 
@@ -30,15 +32,23 @@ class SearchAlbum:
             'deezer',
             'genius',
             'itunes',
-            'playmusic',
-            'spotify'
+            'googleplay',
+            'spotify',
+            'amazon'
         ]
 
     @commands.group(name='search_album', invoke_without_command=True)
     async def search_album(self, ctx, *, album_name=''):
         svc = album_name.split(' ')[0].lower()
         if not album_name or svc not in self.services:
-            return await ctx.send(f'`{", ".join(self.services)}`')
+            services = self.services
+            for service in services:
+                if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
+                    emoji = [emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0]
+                    services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + service
+            embed = discord.Embed(title=f'List of available services for {self.bot.command_prefix}search_album', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
+            embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
+            return await ctx.send(embed=embed)
 
         try:
             album = await globals().get(svc).search_album(' '.join(album_name.split(' ')[1:]))
