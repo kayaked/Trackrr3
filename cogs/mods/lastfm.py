@@ -9,6 +9,7 @@ class lfmAPI:
     KEY = Keys.LASTFM
 
 async def _fetch(method, **kw):
+    """ Taken from Yak(oganessium)'s un-finished Last.FM module """
     params = {**kw, 'method':method, 'format':'json', 'api_key':lfmAPI.KEY}
     async with aiohttp.ClientSession() as session:
         async with session.get(lfmAPI.BASE + "?" + urllib.parse.urlencode(params).replace('+', '%20')) as apir:
@@ -22,11 +23,12 @@ async def _fetch(method, **kw):
     return response
 
 async def search_album(album_name):
+    """ Searches an album by name on Last.FM. """
     response = await _fetch('album.search', album=album_name)
     
     if 'error' in response:
         if response['error'] == 10:
-            raise InvalidKey("Your last.fm API key is not valid.")
+            raise InvalidKey("Your last.fm API key is not valid.") # https://www.last.fm/api/account/create
         raise NotFound(f"Unknown error code {response['error']}")
     
     results = response.get('results', {}).get('albummatches', {}).get('album', [])
@@ -34,8 +36,9 @@ async def search_album(album_name):
     if not results:
         raise NotFound
     
-    results=results[0]
+    results=results[0] # Gets first result
 
+    # Fetches track list from the extra album info End-point.
     response = await _fetch('album.getinfo', album=results.get('name', ''), artist=results.get('artist', 'N/A'))
     response = response.get('album', {}).get('tracks', {}).get('track', [])
     results['track_list'] = [ tr.get('name', '') for tr in response ]

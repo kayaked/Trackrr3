@@ -14,6 +14,7 @@ import cogs.mods.playmusic as playmusic
 import cogs.mods.spotify as spotify
 import cogs.mods.base as base
 import datetime
+import random
 
 class SearchAlbum:
 
@@ -38,7 +39,9 @@ class SearchAlbum:
     async def search_album(self, ctx, *, album_name=''):
         svc = album_name.split(' ')[0].lower()
         if not album_name or svc not in self.services:
-            return await ctx.send(f'`{", ".join(self.services)}`')
+            embed = discord.Embed(title=f'List of available services for {self.bot.command_prefix}search_album', description='\n'.join(self.services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
+            embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
+            return await ctx.send(embed=embed)
 
         try:
             album = await globals().get(svc).search_album(' '.join(album_name.split(' ')[1:]))

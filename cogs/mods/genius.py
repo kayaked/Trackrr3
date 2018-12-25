@@ -4,10 +4,14 @@ from datetime import datetime
 
 class GeniusAPI:
     BASE = 'https://genius.com/api'
+    # Ok so basically api.genius.com requires a key but this one does not??? IDK genius fix ur shit
+    # A ton of their end-points aren't even documented so i might as well do somethin here
 
 async def search_album(album_name):
+    """ Searches an album by name on Genius. """
 
     async with aiohttp.ClientSession() as session:
+        # Searches albums (example: https://genius.com/api/search/albums?q=ASTROWORLD)
         async with session.get(GeniusAPI.BASE + '/search/albums', params={'q': album_name}) as resp:
             resp_json = await resp.json()
 
@@ -19,11 +23,14 @@ async def search_album(album_name):
             raise NotFound
         hit = hits[0].get('result', {}).get('id', 0)
 
+        # Example: https://genius.com/api/albums/34024
         async with session.get(GeniusAPI.BASE + f'/albums/{hit}') as resp:
             resp2_json = await resp.json()
 
         hits = resp2_json.get('response', {}).get('album', {})
 
+        # Retrieves tracklist.
+        # Example: https://genius.com/api/albums/34024/tracks
         async with session.get(GeniusAPI.BASE + f'/albums/{hit}/tracks') as resp:
             tl2_json = await resp.json()
 

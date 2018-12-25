@@ -4,18 +4,20 @@ from datetime import datetime
 import urllib.parse
 from .keys import Keys
 
-# Tidal you are stoopid
+# Deezer API Wrapper designed for use with Trackrr
 
 class DeezerAPI:
     BASE = 'http://api.deezer.com'
 
 async def search_album(album_name):
+    """ Searches an album by name on Deezer. """
     params = {
         'q':album_name,
         'index':0,
         'limit':1,
         'output':'json'
     }
+    # cool of Deezer to not require a key, just wanna throw that 1 out there
     async with aiohttp.ClientSession() as session:
         async with session.get(DeezerAPI.BASE + '/search/album/', params=params) as resp:
             response = await resp.json()
@@ -28,6 +30,7 @@ async def search_album(album_name):
     results=results[0]
 
     async with aiohttp.ClientSession() as session:
+        # Example: http://api.deezer.com/album/65434762
         async with session.get(DeezerAPI.BASE + f'/album/{results.get("id", 0)}', params=params) as resp:
             response = await resp.json()
     responsetr = response.get('tracks', {}).get('data', [])

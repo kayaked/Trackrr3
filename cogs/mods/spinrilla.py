@@ -11,6 +11,11 @@ class SpinrillaAPI:
     AUTH = Keys.SPINRILLA_KEY_ID_AGENT
 
 async def search_album(album_name):
+    """ Searches album info on Spinrilla. API base is not public as of now.
+    
+    Not sure if it's a good idea to provide a params example, so I'm not gonna for now.
+    
+    """
     payload = json.dumps({
         'params':urllib.parse.urlencode({
             'query':album_name,
@@ -29,6 +34,7 @@ async def search_album(album_name):
     results=results[0]
 
     async with aiohttp.ClientSession() as session:
+        # Example: https://www.spinrilla.com/mixtapes/lil-peep-hellboy/player
         async with session.get(results.get('url', '') + '/player', params=SpinrillaAPI.AUTH) as resp:
             response = await resp.text()
             results['track_list'] = [tracc.get('data-title', '') for tracc in bs4.BeautifulSoup(response, 'html.parser').find('ol', {'class':'track-list'}).find_all('li')]

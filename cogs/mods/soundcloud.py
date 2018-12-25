@@ -8,10 +8,13 @@ class SoundCloudAPI:
     TOKEN = Keys.SOUNDCLOUD
 
 async def search_album(album_name):
+    """ Searches an album per its name on SoundCloud. """
+    # Lucky to have this one, registration is closed RN! :)
+    # This uses the v2 of the soundcloud API, which is not currently documented. Feel free to look at and use this code's URLs for your soundcloud utility.
     async with aiohttp.ClientSession() as session:
         if album_name.startswith("id:") and album_name[3:].strip().isdigit():
             params = {'client_id':SoundCloudAPI.TOKEN,'limit':'20'}
-            async with session.get(f"https://api-v2.soundcloud.com/playlists/{album_name[3:].strip()}", params=params) as resp:
+            async with session.get(f"{SoundCloudAPI.BASE}/playlists/{album_name[3:].strip()}", params=params) as resp:
                 try:
                     form = await resp.json()
                 except IndexError:
@@ -19,7 +22,7 @@ async def search_album(album_name):
             return SoundCloudAlbum(form)
         else:
             params = {'client_id':SoundCloudAPI.TOKEN,'q':album_name,'limit':'20'}
-            async with session.get(f"https://api-v2.soundcloud.com/search/albums", params=params) as resp:
+            async with session.get(f"{SoundCloudAPI.BASE}/search/albums", params=params) as resp:
                 try:
                     form=await resp.json()
                     form=form['collection'][0]

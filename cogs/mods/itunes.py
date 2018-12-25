@@ -8,6 +8,7 @@ class itunesAPI:
     BASE = 'https://itunes.apple.com'
 
 async def search_album(album_name):
+    """ Searches an album by name on iTunes/AppleMusic. """
     async with aiohttp.ClientSession() as session:
         async with session.get(itunesAPI.BASE + '/search', params={'term': album_name, 'media': 'music', 'entity': 'album'}) as resp:
             resp_json = await resp.text()
@@ -16,7 +17,8 @@ async def search_album(album_name):
         if not resp_json:
             raise NotFound
         form = resp_json[0]
-        async with session.get(f"https://itunes.apple.com/lookup?id={form['collectionId']}&entity=song") as resp:
+        # Looks at the song by ID to fetch track list
+        async with session.get(f"{itunesAPI.BASE}/lookup?id={form['collectionId']}&entity=song") as resp:
             tracklist_resp = await resp.text()
             tracklist_resp = json.loads(tracklist_resp.strip())
             tracklist_resp = tracklist_resp.get('results', [])

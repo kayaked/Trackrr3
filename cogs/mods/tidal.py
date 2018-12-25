@@ -4,13 +4,14 @@ from datetime import datetime
 import urllib.parse
 from .keys import Keys
 
-# Tidal you are stoopid
+# Tidal you are stoopid give me back me Jay Z on spotify
 
 class TidalAPI:
     BASE = 'https://api.tidalhifi.com/v1/'
     KEY = Keys.TIDAL
 
 async def search_album(album_name):
+    """ Album searcher by provided name on Tidal. """
     params = {
         'token': TidalAPI.KEY,
         'countryCode': 'US',
@@ -28,7 +29,7 @@ async def search_album(album_name):
     
     results=results[0]
 
-    params['limit'] = 25
+    params['limit'] = 25 # Only returns 1 track if still 1 i think
 
     async with aiohttp.ClientSession() as session:
         async with session.get(TidalAPI.BASE + f'albums/{results.get("id", 0)}/tracks', params=params) as resp:
