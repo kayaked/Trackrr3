@@ -23,7 +23,8 @@ class SearchAlbum:
             'spotify',
             'spinrilla',
             'tidal',
-            'deezer'
+            'deezer',
+            'soundcloud'
         ]
 
     @commands.group(name='search_song', invoke_without_command=True, aliases=['search_track', 'song', 'track'])
