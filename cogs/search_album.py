@@ -14,6 +14,7 @@ import cogs.mods.googleplay as googleplay
 import cogs.mods.spotify as spotify
 import cogs.mods.base as base
 import cogs.mods.amazon as amazon
+import cogs.mods.bandcamp as bandcamp
 import datetime
 import random
 
@@ -34,7 +35,8 @@ class SearchAlbum:
             'itunes',
             'googleplay',
             'spotify',
-            'amazon'
+            'amazon',
+            'bandcamp'
         ]
 
     @commands.group(name='search_album', invoke_without_command=True)

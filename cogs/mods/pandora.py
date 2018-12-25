@@ -29,7 +29,6 @@ async def search_song(song_name):
     async with aiohttp.ClientSession() as session:
         async with session.post(PandoraAPI.BASE + f'music/track', json=payload, headers=headers) as resp:
             response = await resp.json()
-    print(response)
     return PandoraSong(response)
 
 class PandoraSong(Song):

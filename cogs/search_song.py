@@ -20,7 +20,7 @@ import io
 from mutagen import id3
 import copy
 
-class SearchAlbum:
+class SearchSong:
 
     def __init__(self, bot):
         self.bot = bot
@@ -99,4 +99,4 @@ class SearchAlbum:
         
 
 def setup(bot):
-    bot.add_cog(SearchAlbum(bot))
+    bot.add_cog(SearchSong(bot))
