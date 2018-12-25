@@ -15,6 +15,8 @@ import cogs.mods.amazon as amazon
 import cogs.mods.base as base
 import datetime
 import random
+import io
+from mutagen import id3
 
 class SearchAlbum:
 
@@ -32,7 +34,7 @@ class SearchAlbum:
         ]
 
     @commands.group(name='search_song', invoke_without_command=True, aliases=['search_track', 'song', 'track'])
-    async def search_song(self, ctx, *, album_name=''):
+    async def search_song(self, ctx, *, album_name='a'):
         svc = album_name.split(' ')[0].lower()
         if not album_name or svc not in self.services:
             services = self.services
@@ -64,6 +66,33 @@ class SearchAlbum:
         embed.set_thumbnail(url=album.cover_url)
 
         return embed
+    
+    @commands.command(name='upload_song', aliases=['upload_track'])
+    async def upload_track(self, ctx, service=None):
+        if not ctx.message.attachments:
+            return await ctx.send('Please attach a file!')
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(ctx.message.attachments[0].url) as resp:
+                raw = await resp.read()
+
+        raw = io.BytesIO(raw)
+
+        raw=id3.ID3(raw)
+
+        class TempTrack:
+            link = ctx.message.attachments[0].url
+            service = 'Local'
+            name = ', '.join(raw.get('TIT2').text)
+            track_album = ', '.join(raw.get('TALB').text)
+            cover_url = 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true'
+            release_date = datetime.datetime.strptime(getattr(raw.get('TDRL'), 'text', ['1970'])[0], '%Y')
+            artist = ', '.join(raw.get('TPE1').text)
+        embed = self.song_format(TempTrack)
+        embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
+        await ctx.send(embed=embed)
+
+        
 
 def setup(bot):
     bot.add_cog(SearchAlbum(bot))
