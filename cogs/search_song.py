@@ -17,6 +17,7 @@ import cogs.mods.base as base
 import datetime
 import random
 import io
+import traceback
 from mutagen import id3
 import copy
 
@@ -26,35 +27,84 @@ class SearchSong:
         self.bot = bot
         self.services = [
             'spotify',
-            'spinrilla',
-            'tidal',
-            'deezer',
-            'soundcloud',
-            'genius',
-            'lastfm',
-            'amazon',
             'itunes',
+            'soundcloud',
+            'amazon',
+            'deezer',
+            'genius',
+            'tidal',
+            'lastfm',
+            'spinrilla',
             'pandora'
         ]
 
     @commands.group(name='search_song', invoke_without_command=True, aliases=['search_track', 'song', 'track', 'tracksearch', 'searchtrack', 'searchsong', 'songsearch', 'song_search'])
-    async def search_song(self, ctx, *, album_name='a'):
-        svc = album_name.split(' ')[0].lower()
-        if not album_name or svc not in self.services:
+    async def search_song(self, ctx, *, song_name='a'):
+        svc = song_name.split(' ')[0].lower()
+        # Paginator for all services.
+        if svc == 'all' and song_name:
+            index = 0
+            async def get_embed():
+                embed = discord.Embed()
+                try:
+                    song = await globals().get(self.services[index]).search_song(' '.join(song_name.split(' ')[1:]))
+                    embed = self.song_format(song)
+                except base.NotFound:
+                    embed = discord.Embed(title='Trackrr', description=f'No results found for `{self.services[index]}`!')
+                embed.add_field(name=r'\⬅', value=self.services[index-1 if index else -1])
+                embed.add_field(name=r'\➡', value=self.services[index+1 if index+1 < len(self.services) else 0])
+                return embed
+            async with ctx.channel.typing():
+                m=await ctx.send(embed=await get_embed())
+            await m.add_reaction('⬅')
+            await m.add_reaction('➡')
+            emojis = ['⬅', '➡']
+            paging=True
+            while paging:
+                try:
+                    reaction, user = await self.bot.wait_for('reaction_add', check=lambda r, u: str(r.emoji) in emojis and not u.bot, timeout=10)
+                    try:
+                        await m.remove_reaction(reaction, user)
+                    except:
+                        pass
+                    if str(reaction.emoji) == '⬅':
+                        if index:
+                            index-=1
+                        else:
+                            index=len(self.services)-1
+                    if str(reaction.emoji) == '➡':
+                        if index+1 < len(self.services):
+                            index+=1
+                        else:
+                            index=0
+                    await m.edit(embed=discord.Embed(title='Trackrr', description=f'🔍 Loading `{self.services[index]}`...'))
+                    await m.edit(embed=await get_embed())
+                except:
+                    paging=False
+                    await m.remove_reaction('⬅', ctx.guild.me)
+                    await m.remove_reaction('➡', ctx.guild.me)
+                    embed=m.embeds[0]
+                    embed.remove_field(-1)
+                    embed.remove_field(-1)
+                    await m.edit(embed=embed)
+                    return
+        #####
+        if not song_name or svc not in self.services:
             services = copy.deepcopy(self.services)
             for service in services:
                 if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
                     emoji = [emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0]
-                    services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + service
+                    services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
+            services.append('🎵 `all`')
             embed = discord.Embed(title=f'List of available services for {self.bot.command_prefix}search_song', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
             embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
             return await ctx.send(embed=embed)
 
         try:
-            album = await globals().get(svc).search_song(' '.join(album_name.split(' ')[1:]))
+            song = await globals().get(svc).search_song(' '.join(song_name.split(' ')[1:]))
         except base.NotFound:
             return await ctx.send(f'Result not found on {svc}!')
-        embed = self.song_format(album)
+        embed = self.song_format(song)
         embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
         await ctx.send(embed=embed)
 

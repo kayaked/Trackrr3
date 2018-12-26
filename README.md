@@ -47,6 +47,8 @@ For example, let's say I want to search for **KIDS SEE GHOSTS**. Trackrr makes i
 
 ![uploadsong](https://i.gyazo.com/51c92fcb0ec977cb3d8add7c5d783bb8.png)
 
+You can also use the source ```all``` to search all sources and switch between results.
+
 **Local search**
 Usage: ```^upload_song``` + MP3 Attachment
 For example, what if I want to get some info about an MP3 I have? Trackrr makes this easy!
@@ -63,7 +65,6 @@ For example, what if I want to get some info about an MP3 I have? Trackrr makes 
 Trackrr will soon support:
 * **YouTube!!!**
 * **Napster**
-* **Search every source (Page-inator?)**
 
 ## This bot can be adapted to suit any needs. Just remove any discord-oriented functions.
 # README.md from [https://github.com/exofeel/Trackrr](https://github.com/exofeel/Trackrr "hi exo")
