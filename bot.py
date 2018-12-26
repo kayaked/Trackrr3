@@ -3,6 +3,15 @@ from discord.ext import commands
 import os
 from cogs.mods.keys import Keys
 
+splash = "  " + r"""
+  ______                __                %%%%%%%%
+ /_  __/________ ______/ /____________  %%%%   %%%%
+  / / / ___/ __ `/ ___/ //_/ ___/ ___/  %% / %  %%%
+ / / / /  / /_/ / /__/ ,< / /  / /      %%%     $%%
+/_/ /_/   \__,_/\___/_/|_/_/  /_/        %%%%%%%%
+
+""".strip()
+
 class Reyackrr(commands.Bot):
     def __init__(self):
         self.token = Keys.DISCORDTOKEN
@@ -14,7 +23,7 @@ class Reyackrr(commands.Bot):
         super().run(self.token)
 
     async def on_ready(self):
-        print("Reyackrr")
+        print(splash)
         yakrrcogs = [
             'user'
         ]
