@@ -24,11 +24,10 @@ async def _fetch(method, **kw):
 
 async def search_album(album_name):
     """ Searches an album by name on Last.FM. """
-    response = await _fetch('album.search', track=album_name)
-    
+    response = await _fetch('album.search', album=album_name)
     if 'error' in response:
         if response['error'] == 10:
-            raise InvalidKey("Your last.fm API key is not valid.") # https://www.last.fm/api/account/create
+            raise NotFound("Your last.fm API key is not valid.") # https://www.last.fm/api/account/create
         raise NotFound(f"Unknown error code {response['error']}")
     
     results = response.get('results', {}).get('albummatches', {}).get('album', [])
@@ -40,7 +39,11 @@ async def search_album(album_name):
 
     # Fetches track list from the extra album info End-point.
     response = await _fetch('album.getinfo', album=results.get('name', ''), artist=results.get('artist', 'N/A'))
-    results['track_list'] = [ tr.get('name', '') for tr in response ]
+    response = response.get('album', {}).get('tracks', {}).get('track', [])
+    if not response:
+        results['track_list'] = []
+    else:
+        results['track_list'] = [ tr.get('name', '') for tr in response ]
 
     return LFMAlbum(results)
 

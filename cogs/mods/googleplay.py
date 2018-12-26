@@ -38,7 +38,6 @@ async def search_album(album_name):
 
     # I run into this a lot, having to make another request for the fucking track list. Pleas just put it in the first 1 🙏
     async with aiohttp.ClientSession() as session:
-        print(hits['link'])
         async with session.get(hits['link']) as resp:
             resp_text = await resp.text()
 

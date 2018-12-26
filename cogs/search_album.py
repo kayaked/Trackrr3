@@ -40,7 +40,7 @@ class SearchAlbum:
             'bandcamp'
         ]
 
-    @commands.group(name='search_album', invoke_without_command=True)
+    @commands.group(name='search_album', invoke_without_command=True, aliases=['album', 'searchalbum', 'albumsearch', 'album_search'])
     async def search_album(self, ctx, *, album_name=''):
         svc = album_name.split(' ')[0].lower()
         if not album_name or svc not in self.services:

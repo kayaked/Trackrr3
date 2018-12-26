@@ -37,7 +37,7 @@ class SearchSong:
             'pandora'
         ]
 
-    @commands.group(name='search_song', invoke_without_command=True, aliases=['search_track', 'song', 'track'])
+    @commands.group(name='search_song', invoke_without_command=True, aliases=['search_track', 'song', 'track', 'tracksearch', 'searchtrack', 'searchsong', 'songsearch', 'song_search'])
     async def search_song(self, ctx, *, album_name='a'):
         svc = album_name.split(' ')[0].lower()
         if not album_name or svc not in self.services:
