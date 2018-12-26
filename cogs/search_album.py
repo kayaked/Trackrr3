@@ -37,8 +37,7 @@ class SearchAlbum:
             'itunes',
             'googleplay',
             'amazon',
-            'bandcamp',
-            'youtube'
+            'bandcamp'
         ]
 
     @commands.group(name='search_album', invoke_without_command=True, aliases=['album', 'searchalbum', 'albumsearch', 'album_search'])
