@@ -100,14 +100,15 @@ class SearchSong:
         embed = self.song_format(TempTrack)
         embed.title = embed.title + ' 🖥'
         embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
-
-        if raw.get('APIC:'):
-            buffer = io.BytesIO(raw.get('APIC:').data)
-            f = discord.File(buffer, filename="image.png")
+        file = {}
+        if any([key.startswith('APIC:') for key in list(raw.keys())]):
+            keyname = [key for key in list(raw.keys()) if key.startswith('APIC')][0]
+            buffer = io.BytesIO(raw.get(keyname).data)
+            file['file'] = discord.File(buffer, filename="image.png")
             embed.set_thumbnail(url="attachment://image.png")
         else:
             embed.set_thumbnail(url='https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
-        await ctx.send(file=f, embed=embed)
+        await ctx.send(**file, embed=embed)
         
 
 def setup(bot):
