@@ -84,18 +84,30 @@ class SearchSong:
 
         raw=id3.ID3(raw)
 
+        date = raw.get('TDRL')
+
+        if not date:
+            date = raw.get('TDRC')
+
         class TempTrack:
             link = ctx.message.attachments[0].url
-            service = 'Local'
+            service = 'computer'
             name = ', '.join(raw.get('TIT2').text)
             track_album = ', '.join(raw.get('TALB').text)
             cover_url = 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true'
-            release_date = datetime.datetime.strptime(getattr(raw.get('TDRL'), 'text', ['1970'])[0], '%Y')
+            release_date = datetime.datetime.strptime(str(getattr(date, 'text', ['1970'])[0]), '%Y')
             artist = ', '.join(raw.get('TPE1').text)
         embed = self.song_format(TempTrack)
+        embed.title = embed.title + ' 🖥'
         embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
-        await ctx.send(embed=embed)
 
+        if raw.get('APIC:'):
+            buffer = io.BytesIO(raw.get('APIC:').data)
+            f = discord.File(buffer, filename="image.png")
+            embed.set_thumbnail(url="attachment://image.png")
+        else:
+            embed.set_thumbnail(url='https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
+        await ctx.send(file=f, embed=embed)
         
 
 def setup(bot):
