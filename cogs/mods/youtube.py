@@ -12,8 +12,6 @@ async def search_album(album_name):
     async with aiohttp.ClientSession() as session:
         async with session.post(YTMusicKeys.URL, headers=YTMusicKeys.HEADERS, json=payload, params=YTMusicKeys.PARAMS) as resp:
             r = await resp.json()
-
-    print(r['contents']['sectionListRenderer']['contents'].__len__())
     first_results = r['contents']['sectionListRenderer']['contents'][0]['musicShelfRenderer']['contents'][0]['musicResponsiveListItemRenderer']
 
     results = [i['musicResponsiveListItemFlexColumnRenderer']['text']['runs'][0]['text'] for i in first_results['flexColumns']] + [first_results['thumbnail']['musicThumbnailRenderer']['thumbnail']['thumbnails'][-1]['url']]
