@@ -4,15 +4,12 @@ from datetime import datetime
 
 import aiohttp
 
-from .base import Album
+from .base import Album, NotFound
 from .base import Song
 
 
 class itunesAPI:
     BASE = 'https://itunes.apple.com'
-
-class NotFound(Exception):
-    pass
 
 # Constructs a link to request with the default settings
 def construct_link(type, search_term:str):

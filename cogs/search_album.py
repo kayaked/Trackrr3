@@ -17,6 +17,7 @@ import cogs.mods.amazon as amazon
 import cogs.mods.bandcamp as bandcamp
 import copy
 import datetime
+import traceback
 import random
 
 class SearchAlbum:
@@ -52,8 +53,8 @@ class SearchAlbum:
                     embed = self.album_format(album)
                 except base.NotFound:
                     embed = discord.Embed(title='Trackrr', description=f'No results found for `{self.services[index]}`!')
-                embed.add_field(name=r'\⬅', value=self.services[index-1 if index else 0])
-                embed.add_field(name=r'\➡', value=self.services[index+1 if index < len(self.services) else 0])
+                embed.add_field(name=r'\⬅', value=self.services[index-1 if index else -1])
+                embed.add_field(name=r'\➡', value=self.services[index+1 if index+1 < len(self.services) else 0])
                 return embed
             async with ctx.channel.typing():
                 m=await ctx.send(embed=await get_embed())
@@ -69,9 +70,15 @@ class SearchAlbum:
                     except:
                         pass
                     if str(reaction.emoji) == '⬅':
-                        index-=1 if index else 0
+                        if index:
+                            index-=1
+                        else:
+                            index=len(self.services)-1
                     if str(reaction.emoji) == '➡':
-                        index+=1 if index < len(self.services) else 0
+                        if index+1 < len(self.services):
+                            index+=1
+                        else:
+                            index=0
                     await m.edit(embed=discord.Embed(title='Trackrr', description=f'🔍 Loading `{self.services[index]}`...'))
                     await m.edit(embed=await get_embed())
                 except:
