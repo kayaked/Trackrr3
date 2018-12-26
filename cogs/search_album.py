@@ -15,6 +15,7 @@ import cogs.mods.spotify as spotify
 import cogs.mods.base as base
 import cogs.mods.amazon as amazon
 import cogs.mods.bandcamp as bandcamp
+import cogs.mods.youtubemusic as youtubemusic
 import copy
 import datetime
 import random
@@ -35,9 +36,9 @@ class SearchAlbum:
             'genius',
             'itunes',
             'googleplay',
-            'spotify',
             'amazon',
-            'bandcamp'
+            'bandcamp',
+            'youtubemusic'
         ]
 
     @commands.group(name='search_album', invoke_without_command=True, aliases=['album', 'searchalbum', 'albumsearch', 'album_search'])
