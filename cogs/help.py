@@ -34,3 +34,9 @@ class Help:
         embed.add_field(name=f'FAQ', value=faq)
         embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
         await ctx.send(embed=embed)
+
+    @commands.command(name='ping', aliases=['latency', 'speed'])
+    async def _ping(self, ctx):
+        ping = round(self.bot.latency*1000)
+        embed = discord.Embed(title='Trackrr Ping', description=f'<a:ping_heartbeat:521565184188219392> {ping}ms', color=random.randint(0x000000, 0xffffff))
+        await ctx.send(embed=embed)
