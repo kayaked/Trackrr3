@@ -97,16 +97,17 @@ class SearchSong:
                     services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
             services.append('🎵 `all`')
             embed = discord.Embed(title=f'List of available services for {self.bot.command_prefix}search_song', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
-            embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
+            embed.set_footer(text='Trackrr')
             return await ctx.send(embed=embed)
 
-        try:
-            song = await globals().get(svc).search_song(' '.join(song_name.split(' ')[1:]))
-        except base.NotFound:
-            return await ctx.send(f'Result not found on {svc}!')
-        embed = self.song_format(song)
-        embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
-        await ctx.send(embed=embed)
+        async with ctx.channel.typing():
+            try:
+                song = await globals().get(svc).search_song(' '.join(song_name.split(' ')[1:]))
+            except base.NotFound:
+                return await ctx.send(f'Result not found on {svc}!')
+            embed = self.song_format(song)
+            embed.set_footer(text='Trackrr')
+            await ctx.send(embed=embed)
 
     def song_format(self, album):
         embed = discord.Embed(title=str(album.name), url=album.link, color=discord.Color(getattr(album, 'color', 0)), timestamp=datetime.datetime.now())
@@ -149,7 +150,7 @@ class SearchSong:
             artist = ', '.join(raw.get('TPE1').text)
         embed = self.song_format(TempTrack)
         embed.title = embed.title + ' 🖥'
-        embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
+        embed.set_footer(text='Trackrr')
         file = {}
         if any([key.startswith('APIC:') for key in list(raw.keys())]):
             keyname = [key for key in list(raw.keys()) if key.startswith('APIC')][0]

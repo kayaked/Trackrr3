@@ -101,7 +101,7 @@ class SearchAlbum:
                     services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
             services.append('🎵 `all`')
             embed = discord.Embed(title=f'List of available services for {self.bot.command_prefix}search_album', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
-            embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
+            embed.set_footer(text='Trackrr')
             return await ctx.send(embed=embed)
         ####
 
@@ -112,7 +112,7 @@ class SearchAlbum:
             except base.NotFound:
                 return await ctx.send(f'Result not found on {svc}!')
             embed = self.album_format(album)
-            embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
+            embed.set_footer(text='Trackrr')
             await ctx.send(embed=embed)
 
     def album_format(self, album):

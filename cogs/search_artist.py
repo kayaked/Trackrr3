@@ -15,7 +15,7 @@ class ArtistSearch:
                 embed = await itunes.search_artist(artist_name)
             except base.NotFound:
                 embed = discord.Embed(title=f'Trackrr', description=f'No results found for `{artist_name}`!')
-            embed.set_footer(text=f'Information requested by user {ctx.author} • {ctx.author.id}')
+            embed.set_footer(text='Trackrr')
             await ctx.send(embed=embed)
 
 def setup(bot):
