@@ -55,12 +55,17 @@ For example, what if I want to get some info about an MP3 I have? Trackrr makes 
 
 [![4amconvos](https://i.gyazo.com/b4ac173c04bb1b47978cc9eac683b090.png)](https://soundcloud.com/4amconvos)
 
+**Artist search**
+Usage: ```^search_artist artistname```
+For example, what if you want to search for **Pusha T**? Trackrr can do this too!
+
+```^search_artist Pusha T```
+
 ## What works?
 - Music search
 - Album search
-
-## What needs to be fixed?
 - Artist search
+- Local track search
 
 Trackrr will soon support:
 * **YouTube!!!**

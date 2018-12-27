@@ -3,6 +3,9 @@ import urllib.parse
 from datetime import datetime
 
 import aiohttp
+import bs4
+import discord
+import lxml
 
 from .base import Album, NotFound
 from .base import Song
@@ -13,20 +16,99 @@ class itunesAPI:
 
 # Constructs a link to request with the default settings
 def construct_link(type, search_term:str):
+    params={}
     if type == "album":
         params = {
             "term": search_term,
             "entity": "album"
         }
-        url = itunesAPI.BASE + "/search?" + urllib.parse.urlencode(params)
-        return url
     elif type == "track":
         params = {
             "term": search_term,
             "entity": "song"
         }
-        url = itunesAPI.BASE + "/search?" + urllib.parse.urlencode(params)
-        return url
+    elif type == 'artist':
+        params = {
+            'term': search_term,
+            'entity': 'musicArtist'
+        }
+    url = itunesAPI.BASE + "/search?" + urllib.parse.urlencode(params)
+    return url
+
+async def search_artist(artist):
+    async with aiohttp.ClientSession() as session:
+        url = construct_link(type='artist', search_term=artist)
+        async with session.get(url) as resp:
+            resp_json = await resp.json(content_type=None)
+
+        artist_info = {
+            'name':'Unknown Artist',
+            'description':'No info.',
+            'date_birth':'Unknown',
+            'latest_release':'N/A',
+            'home_town':'Somewhere, Earth',
+            'image_url':'https://raw.githubusercontent.com/exofeel/Trackrr/master/assets/UnknownArtist.png'
+        }
+        
+        results = resp_json.get('results', [])
+
+        if not results:
+            raise NotFound
+
+        
+        top_result = results[0]
+        
+        # Get the URL from iTunes with info
+        result_url = top_result.get('artistLinkUrl', 'https://itunes.apple.com/')
+
+        # Request new URL
+        async with session.get(result_url) as resp:
+            artist_info_text = await resp.text()
+
+        # Parse HTML with BeautifulSoup4
+        soup = bs4.BeautifulSoup(artist_info_text, 'lxml')
+        soup_json = json.loads(getattr(soup.find('script', type='application/ld+json'), 'text', '{}'))
+
+        # Get name
+        artist_info['name'] = soup_json.get('name', 'Unknown Artist')
+
+        # Get desc.
+        if 'description' in soup_json:
+            artist_info['description'] = soup_json.get('description')
+            if artist_info['description'].__len__() > 500:
+                artist_info['description'] = artist_info['description'][:500] + f'[...]({result_url})'
+        
+        # Get Birth date and Home-town
+        # cont == The containers on the page, such as DOB
+        #find_cont = lambda cont: cont.find('dt', {'class':'we-truncate we-truncate--single-line ember-view we-about-artist-inline__details-label'})
+        containers_raw = soup.find_all('div', {'class':'we-about-artist-inline__details-item'})
+        born_containers = [cont for cont in containers_raw if 'BORN' in getattr(cont, 'text', '')]
+        if born_containers:
+            artist_info['date_birth'] = getattr(born_containers[0].find('dd'), 'text', 'Unknown').strip()
+        home_town_containers = [cont for cont in containers_raw if 'HOMETOWN' in getattr(cont, 'text', '')]
+        if home_town_containers:
+            artist_info['home_town'] = getattr(home_town_containers[0].find('dd'), 'text', 'Unknown').strip()
+        
+        # Get Latest Release info. /name
+        latest_release_raw = soup.find("span", {"class": "featured-album__text__headline targeted-link__target"})
+        latest_release = getattr(latest_release_raw, 'text', 'IDK')
+        artist_info['latest_release'] = latest_release
+        
+        # Get artist picture
+        found_image = soup.find("source", {"class" : "we-artwork__source"})
+        if found_image:
+            if found_image.get('srcset'):
+                artist_info['image_url'] = found_image.get('srcset').split(',')[0].split(' ')[0]
+        
+        embed = discord.Embed(title=artist_info['name'] + ' <:itunes:526554505626779659>', url=result_url, timestamp=datetime.now(), color=discord.Color(0xe98def))
+        embed.set_image(url=artist_info['image_url'])
+        embed.add_field(name='Latest Release 🎵', value=artist_info['latest_release'])
+        embed.add_field(name='Date of Birth 📆', value=artist_info['date_birth'])
+        embed.add_field(name='Hometown 📌', value=artist_info['home_town'], inline=False)
+        embed.add_field(name=f'About {artist_info["name"]} 🗒', value=artist_info['description'])
+
+        return embed
+        
 
 async def search_album(album_name):
     """ Searches an album by name on iTunes/AppleMusic. """
