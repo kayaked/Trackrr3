@@ -69,6 +69,8 @@ For example, what if you want to search for **Pusha T**? Trackrr can do this too
 
 ```^search_artist Pusha T```
 
+![artist](https://i.gyazo.com/7d33394b56834ca32dc4c5db068806fe.png)
+
 ## What works?
 - Music search
 - Album search
