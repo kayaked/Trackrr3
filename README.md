@@ -14,10 +14,10 @@ Trackrr supports the following top music sources:
 * **Amazon Music**
 * **Deezer**
 * **Google Play Music**
+* **Genius**
 * **Bandcamp**
 * **Spinrilla**
 * **MusicBrainz**
-* **Genius**
 * **Tidal**
 * **Last.FM**
 * **Pandora**

@@ -15,7 +15,10 @@ class DBFunctions:
         await ctx.send(':tools:')
     
     @prefs.command(name='service')
-    async def prefs_service(self, ctx, svc):
+    async def prefs_service(self, ctx, svc=None):
+        if not svc:
+            current_service = await db.preferredsvc.find_one({'uid':ctx.author.id})
+            await ctx.send(getattr(current_service, 'get', {}.get)('service', f'No preferred service set up. Try running `{self.bot.command_prefix}prefs service <service name>`.'))
         services = self.bot.get_cog('SearchSong').services + self.bot.get_cog('SearchAlbum').services
         if svc not in services:
             return

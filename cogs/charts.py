@@ -4,6 +4,7 @@ import os
 import aiohttp
 import bs4
 import json
+import shlex
 import asyncio
 
 class Charts(object):
@@ -109,6 +110,33 @@ class Charts(object):
                     embed.add_field(name="Songs", value=topSongs)
 
                     await ctx.send(embed=embed)
+
+    @commands.command(name='viral')
+    @commands.cooldown(10, 4, commands.BucketType.guild)
+    @commands.cooldown(1, 3, commands.BucketType.user)
+    async def viral(self, ctx):
+        async with ctx.channel.typing():
+            async with aiohttp.ClientSession() as session:
+                async with session.get('https://spotifycharts.com/viral/us/daily/latest/download') as resp:
+                    resp_text = await resp.text()
+                top_20 = []
+                for line in resp_text.splitlines()[1:20]:
+                    m = shlex.shlex(line, posix=True)
+                    m.whitespace += ','
+                    m.whitespace_split = True
+                    m = list(m)
+                    top_20.append({'artist': m[2], 'place': m[0], 'name': m[1]})
+                topSongs = '\n'.join([f'{item.get("place")}. {item.get("artist", "N/A")} - {item.get("name", "Unknown")}' for item in top_20])
+
+                embed = discord.Embed(title="Spotify Viral Songs 🖥", colour=discord.Colour(0x84bd00), description="You can view the full list [here](https://www.spotifycharts.com/viral/us/daily/latest)")
+
+                embed.set_thumbnail(url="https://images-eu.ssl-images-amazon.com/images/I/51rttY7a%2B9L.png")
+                embed.set_author(name="Trackrr Music Search")
+                embed.set_footer(text="Trackrr Music Search | Data pulled from SpotifyCharts", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
+
+                embed.add_field(name="Songs", value=topSongs)
+
+                await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Charts(bot))

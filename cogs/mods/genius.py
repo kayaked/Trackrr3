@@ -60,6 +60,10 @@ async def search_song(song_name):
 
         hits = resp2_json.get('response', {}).get('song', {})
 
+        if not hits.get('release_date'):
+            hits['release_date'] = '1970-01-01'
+
+
         return GeniusSong(hits)
 
 class GeniusAlbum(Album):
