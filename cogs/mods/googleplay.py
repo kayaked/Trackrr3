@@ -38,13 +38,11 @@ async def search_album(album_name):
 
     # I run into this a lot, having to make another request for the fucking track list. Pleas just put it in the first 1 🙏
     async with aiohttp.ClientSession() as session:
-        print(hits['link'])
         async with session.get(hits['link']) as resp:
             resp_text = await resp.text()
 
     soup = bs4.BeautifulSoup(resp_text, 'html.parser')
     track_list = soup.find('table', {'class':'track-list'}).find_all('tr', {'class':'track-list-row'})
-    [print(tracc.find('div', {'class':'title'})) for tracc in track_list]
     hits['track_list'] = [tracc.find('div', {'class':'title'}).text.strip() for tracc in track_list]
     try:
         hits['release_date'] = [info for info in soup.find_all('div', {'class':'meta-info'}) if 'Released' in info.text][0].find('div', {'class':'content'}).text

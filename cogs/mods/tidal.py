@@ -72,7 +72,7 @@ class TidalAlbum(Album):
         self.artist = data.get('artist', {}).get('name', 'N/A')
         self.link = data.get('url', 'https://tidal.com/')
         self.track_list = data.get('track_list', [])
-        self.cover_url = 'https://resources.tidal.com/images/' + data.get('cover').replace('-', '/') + '/1280x1280.jpg'
+        self.cover_url = 'https://resources.wimpmusic.com/images/' + data.get('cover').replace('-', '/') + '/1280x1280.jpg'
         self.release_date = datetime.strptime(data.get('releaseDate', '1970-01-01'), '%Y-%m-%d')
 
 class TidalSong(Song):
@@ -83,6 +83,6 @@ class TidalSong(Song):
         self.name = data.get('title', 'N/A')
         self.artist = ', '.join([artist['name'] for artist in data.get('artists', [])])
         self.link = data.get('url', 'https://tidal.com/')
-        self.cover_url = 'https://resources.tidal.com/images/' + data.get('album', {}).get('cover').replace('-', '/') + '/1280x1280.jpg'
+        self.cover_url = 'https://resources.wimpmusic.com/images/' + data.get('album', {}).get('cover').replace('-', '/') + '/1280x1280.jpg'
         self.track_album = data.get('album', {}).get('title', 'N/A')
         self.release_date = datetime.strptime(data.get('streamStartDate', '1970-01-01T00:00:00.000+0000').split('T')[0], '%Y-%m-%d')

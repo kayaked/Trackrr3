@@ -2,6 +2,7 @@ from pyfy import AsyncSpotify, ClientCreds
 #from .keys import SPOTIFYSECRET, SPOTIFYCLIENT, SPOTIFYSCOPE, SPOTIFYNAME, SPOTIFYREDIRECTURL
 #from .base import Album
 from .base import *
+from .base import NotFound
 from .keys import Keys
 from datetime import datetime
 
@@ -9,8 +10,6 @@ from datetime import datetime
 # Ported from TrackrrV1-V2
 # Now using PyFy async lib
 
-class NotFound(Exception):
-    pass
 class SpotifyError(Exception):
     pass
 
