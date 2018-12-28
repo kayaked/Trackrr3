@@ -33,13 +33,13 @@ class Help:
         embed.add_field(name=f'`{self.bot.command_prefix}search_artist` `<*artist name>`', value=f'Search for an artist and information about them.')
         embed.add_field(name=f'`{self.bot.command_prefix}upload_song` `[MP3 ATTACHMENT]`', value=f'Attach an MP3 file to your message and receive info about the song you uploaded.')
         embed.add_field(name=f'`{self.bot.command_prefix}help`', value=f'Shows this menu.')
-        embed.set_footer(text=f'Trackrr')
+        embed.set_footer(text="Trackrr Music Search | Created by exofeel#3333 X Yak#7474", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
         await ctx.send(embed=embed)
 
     @commands.command(name='faq', aliases=['questions', ])
     async def _faq(self, ctx):
         embed = discord.Embed(title='Trackrr 3 - Frequently Asked Questions', description=faq, timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
-        embed.set_footer(text=f'Trackrr')
+        embed.set_footer(text="Trackrr Music Search | Created by exofeel#3333 X Yak#7474", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
         await ctx.send(embed=embed)
 
     @commands.command(name='ping', aliases=['latency', 'speed'])

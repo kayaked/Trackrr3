@@ -101,7 +101,7 @@ class SearchAlbum:
                     services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
             services.append('🎵 `all`')
             embed = discord.Embed(title=f'List of available services for {self.bot.command_prefix}search_album', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
-            embed.set_footer(text='Trackrr')
+            embed.set_footer(text="Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
             return await ctx.send(embed=embed)
         ####
 
@@ -112,7 +112,6 @@ class SearchAlbum:
             except base.NotFound:
                 return await ctx.send(f'Result not found on {svc}!')
             embed = self.album_format(album)
-            embed.set_footer(text='Trackrr')
             await ctx.send(embed=embed)
 
     def album_format(self, album):
@@ -124,6 +123,7 @@ class SearchAlbum:
         embed.add_field(name='Artist(s)', value=album.artist, inline=False)
         embed.add_field(name='Released', value=album.release_date.strftime('%B %-d, %Y'), inline=False)
         embed.add_field(name='Track List', value='\n'.join(album.track_list).replace('*', r'\*') if album.track_list else 'Unknown', inline=False)
+        embed.set_footer(text=f"Trackrr Music Search | Data pulled from {album.service}", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
         embed.set_thumbnail(url=album.cover_url)
 
         return embed

@@ -24,9 +24,6 @@ class Reyackrr(commands.Bot):
 
     async def on_ready(self):
         print(splash)
-        yakrrcogs = [
-            'user'
-        ]
         for ext in [file[:-3] for file in os.listdir('cogs') if file.endswith('.py') and os.path.isfile(os.path.join('cogs', file))]:
             self.load_extension("{prefix}.{package}".format(prefix="cogs", package=ext))
 

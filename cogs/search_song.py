@@ -97,7 +97,7 @@ class SearchSong:
                     services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
             services.append('🎵 `all`')
             embed = discord.Embed(title=f'List of available services for {self.bot.command_prefix}search_song', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
-            embed.set_footer(text='Trackrr')
+            embed.set_footer(text="Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
             return await ctx.send(embed=embed)
 
         async with ctx.channel.typing():
@@ -106,7 +106,6 @@ class SearchSong:
             except base.NotFound:
                 return await ctx.send(f'Result not found on {svc}!')
             embed = self.song_format(song)
-            embed.set_footer(text='Trackrr')
             await ctx.send(embed=embed)
 
     def song_format(self, album):
@@ -118,6 +117,7 @@ class SearchSong:
         embed.add_field(name='Artist(s)', value=album.artist, inline=False)
         embed.add_field(name='Released', value=album.release_date.strftime('%B %-d, %Y'), inline=False)
         embed.add_field(name='Album', value=album.track_album, inline=False)
+        embed.set_footer(text=f"Trackrr Music Search | Data pulled from {album.service}", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
         embed.set_thumbnail(url=album.cover_url)
 
         return embed
@@ -150,7 +150,7 @@ class SearchSong:
             artist = ', '.join(raw.get('TPE1').text)
         embed = self.song_format(TempTrack)
         embed.title = embed.title + ' 🖥'
-        embed.set_footer(text='Trackrr')
+        embed.set_footer(text="Trackrr Music Search | Data pulled from ID3 tags using Mutagen", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
         file = {}
         if any([key.startswith('APIC:') for key in list(raw.keys())]):
             keyname = [key for key in list(raw.keys()) if key.startswith('APIC')][0]
