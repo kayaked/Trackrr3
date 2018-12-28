@@ -26,13 +26,14 @@ class Help:
 
     @commands.command(name='help', aliases=['support', 'info', 'botinfo'])
     async def _help(self, ctx):
+        cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
         embed = discord.Embed(title='Trackrr 3', description='A Discord bot that searches music information anywhere, anytime.', timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
         embed.set_thumbnail(url='https://cdn.discordapp.com/avatars/449305030802145280/14a07b4dee929f492871e814f0330af4.png?size=128')
-        embed.add_field(name=f'`{self.bot.command_prefix}search_album` `<service/all>` `<*album name>`', value=f'Search for an album/mixtape on a specified service, or all services.\nRun `{self.bot.command_prefix}search_album` for a list of services.')
-        embed.add_field(name=f'`{self.bot.command_prefix}search_song` `<service/all>` `<*song name>`', value=f'Search for an song/track on a specified service, or all services.\nRun `{self.bot.command_prefix}search_song` for a list of services.')
-        embed.add_field(name=f'`{self.bot.command_prefix}search_artist` `<*artist name>`', value=f'Search for an artist and information about them.')
-        embed.add_field(name=f'`{self.bot.command_prefix}upload_song` `[MP3 ATTACHMENT]`', value=f'Attach an MP3 file to your message and receive info about the song you uploaded.')
-        embed.add_field(name=f'`{self.bot.command_prefix}help`', value=f'Shows this menu.')
+        embed.add_field(name=f'`{cmdprefix}search_album` `<service/all>` `<*album name>`', value=f'Search for an album/mixtape on a specified service, or all services.\nRun `{cmdprefix}search_album` for a list of services.')
+        embed.add_field(name=f'`{cmdprefix}search_song` `<service/all>` `<*song name>`', value=f'Search for an song/track on a specified service, or all services.\nRun `{cmdprefix}search_song` for a list of services.')
+        embed.add_field(name=f'`{cmdprefix}search_artist` `<*artist name>`', value=f'Search for an artist and information about them.')
+        embed.add_field(name=f'`{cmdprefix}upload_song` `[MP3 ATTACHMENT]`', value=f'Attach an MP3 file to your message and receive info about the song you uploaded.')
+        embed.add_field(name=f'`{cmdprefix}help`', value=f'Shows this menu.')
         embed.set_footer(text="Trackrr Music Search | Created by exofeel#3333 X Yak#7474", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
         await ctx.send(embed=embed)
 

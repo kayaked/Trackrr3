@@ -46,7 +46,10 @@ class SearchAlbum:
 
     @commands.group(name='search_album', invoke_without_command=True, aliases=['album', 'searchalbum', 'albumsearch', 'album_search'])
     async def search_album(self, ctx, *, album_name=''):
-        svc = album_name.split(' ')[0].lower()
+        try:
+            svc = album_name.split(' ')[0].lower()
+        except:
+            svc = None
         # Paginator for all services.
         if svc == 'all' and album_name:
             current_service = await db.preferredsvc.find_one({'uid':ctx.author.id})
@@ -90,7 +93,7 @@ class SearchAlbum:
         #####
 
         # Checks for a preferred service
-        if svc not in self.services and await db.preferredsvc.find_one({'uid':ctx.author.id}):
+        if svc and svc not in self.services and await db.preferredsvc.find_one({'uid':ctx.author.id}):
             svc = await db.preferredsvc.find_one({'uid':ctx.author.id})
             svc=svc.get('service', '')
             album_name = svc + ' ' + album_name
@@ -103,7 +106,8 @@ class SearchAlbum:
                     emoji = [emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0]
                     services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
             services.append('🎵 `all`')
-            embed = discord.Embed(title=f'List of available services for {self.bot.command_prefix}search_album', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
+            cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
+            embed = discord.Embed(title=f'List of available services for {cmdprefix}search_album', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
             embed.set_footer(text="Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
             return await ctx.send(embed=embed)
         ####

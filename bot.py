@@ -2,6 +2,9 @@ import discord
 from discord.ext import commands
 import os
 from cogs.mods.keys import Keys
+import motor.motor_asyncio
+client = motor.motor_asyncio.AsyncIOMotorClient()
+db=client['Trackrr']
 
 splash = "  " + r"""
   ______                __                %%%%%%%%
@@ -13,10 +16,17 @@ ____________________________________________________
 
 """.strip()
 
+async def prefix_func(bot, msg):
+    prefixes = [f'<@!{bot.user.id}> ', f'<@{bot.user.id}> ', '^']
+    prefix = await db.preferredsvc.find_one({'gid':msg.guild.id})
+    if prefix:
+        prefixes[-1] = prefix.get('prefix', '^')
+    return prefixes
+
 class Reyackrr(commands.Bot):
     def __init__(self):
         self.token = Keys.DISCORDTOKEN
-        super().__init__(command_prefix="^")
+        super().__init__(command_prefix=prefix_func)
         self.remove_command('help')
 
     def run(self, token=None):

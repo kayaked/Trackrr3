@@ -43,8 +43,11 @@ class SearchSong:
         ]
 
     @commands.group(name='search_song', invoke_without_command=True, aliases=['search', 'search_track', 'song', 'track', 'tracksearch', 'searchtrack', 'searchsong', 'songsearch', 'song_search', 'track_search'])
-    async def search_song(self, ctx, *, song_name='a'):
-        svc = song_name.split(' ')[0].lower()
+    async def search_song(self, ctx, *, song_name=None):
+        try:
+            svc = song_name.split(' ')[0].lower()
+        except:
+            svc = None
         # Paginator for all services.
         if svc == 'all' and song_name:
             current_service = await db.preferredsvc.find_one({'uid':ctx.author.id})
@@ -87,7 +90,7 @@ class SearchSong:
                     return
 
         # Checks for a preferred service
-        if svc not in self.services and await db.preferredsvc.find_one({'uid':ctx.author.id}) and svc != 'list':
+        if svc and svc not in self.services and await db.preferredsvc.find_one({'uid':ctx.author.id}) and svc != 'list':
             svc = await db.preferredsvc.find_one({'uid':ctx.author.id})
             svc=svc.get('service', '')
             song_name = svc + ' ' + song_name
@@ -100,7 +103,8 @@ class SearchSong:
                     emoji = [emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0]
                     services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
             services.append('🎵 `all`')
-            embed = discord.Embed(title=f'List of available services for {self.bot.command_prefix}search_song', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
+            cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
+            embed = discord.Embed(title=f'List of available services for {cmdprefix}search_song', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
             embed.set_footer(text="Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
             return await ctx.send(embed=embed)
 

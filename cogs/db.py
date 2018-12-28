@@ -22,9 +22,22 @@ class DBFunctions:
         services = self.bot.get_cog('SearchSong').services + self.bot.get_cog('SearchAlbum').services
         if svc not in services:
             return
-        if not await db.preferredsvc.find_one_and_replace({'uid':ctx.author.id}, {'uid':ctx.author.id, 'service':svc}):
+        if not await db.preferredsvc.find_one_and_update({'uid':ctx.author.id}, {'$set':{'service':svc}}):
             await db.preferredsvc.insert_one({'uid':ctx.author.id, 'service':svc})
         await ctx.send(f'Set your preferred service to {svc}')
+
+    @prefs.command(name='prefix')
+    @commands.has_permissions(administrator=True)
+    async def prefs_prefix(self, ctx, prefix=None):
+        cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
+        if not prefix:
+            if cmdprefix == '^':
+                return await ctx.send(f'No preferred service set up. Try running `{cmdprefix}prefs prefix <prefix>`.')
+            else:
+                return await ctx.send(f'This guild\'s current custom prefix is `{cmdprefix}`.')
+        if not await db.preferredsvc.find_one_and_update({'gid':ctx.guild.id}, {'$set':{'prefix':prefix}}):
+            await db.preferredsvc.insert_one({'gid':ctx.guild.id, 'prefix':prefix})
+        await ctx.send(f'Set your guild\'s prefix to {prefix}')
 
 def setup(bot):
     bot.add_cog(DBFunctions(bot))
