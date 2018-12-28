@@ -91,7 +91,7 @@ Usage: ```^prefs service servicename```
 
 For example, let's say you want to search **Deezer** by default?
 
-![prefs](https://i.gyazo.com/430966da5afae93621a2f53a578b626b.png)
+![prefs](https://i.gyazo.com/a430d3fc7bac7b49a61c65cfe4a0714b.png)
 
 ## What works?
 - Music search
