@@ -42,7 +42,7 @@ class SearchSong:
             'pandora'
         ]
 
-    @commands.group(name='search_song', invoke_without_command=True, aliases=['search_track', 'song', 'track', 'tracksearch', 'searchtrack', 'searchsong', 'songsearch', 'song_search'])
+    @commands.group(name='search_song', invoke_without_command=True, aliases=['search', 'search_track', 'song', 'track', 'tracksearch', 'searchtrack', 'searchsong', 'songsearch', 'song_search', 'track_search'])
     async def search_song(self, ctx, *, song_name='a'):
         svc = song_name.split(' ')[0].lower()
         # Paginator for all services.
@@ -87,13 +87,13 @@ class SearchSong:
                     return
 
         # Checks for a preferred service
-        if svc not in self.services and await db.preferredsvc.find_one({'uid':ctx.author.id}):
+        if svc not in self.services and await db.preferredsvc.find_one({'uid':ctx.author.id}) and svc != 'list':
             svc = await db.preferredsvc.find_one({'uid':ctx.author.id})
             svc=svc.get('service', '')
             song_name = svc + ' ' + song_name
         
         #####
-        if not song_name or svc not in self.services:
+        if not song_name or svc not in self.services or svc == 'list':
             services = copy.deepcopy(self.services)
             for service in services:
                 if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:

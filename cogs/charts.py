@@ -38,6 +38,7 @@ class Charts(object):
             'songs':[],
             'albums':[]
         }
+        print('Downloading Billboard Charts')
         self.bot.loop.create_task(self.scrape())
 
     @commands.command(name='charts')

@@ -9,6 +9,7 @@ splash = "  " + r"""
   / / / ___/ __ `/ ___/ //_/ ___/ ___/  %% / %  %%%
  / / / /  / /_/ / /__/ ,< / /  / /      %%%     $%%
 /_/ /_/   \__,_/\___/_/|_/_/  /_/        %%%%%%%%
+____________________________________________________
 
 """.strip()
 
@@ -25,6 +26,8 @@ class Reyackrr(commands.Bot):
     async def on_ready(self):
         print(splash)
         for ext in [file[:-3] for file in os.listdir('cogs') if file.endswith('.py') and os.path.isfile(os.path.join('cogs', file))]:
-            self.load_extension("{prefix}.{package}".format(prefix="cogs", package=ext))
+            package = "{prefix}.{package}".format(prefix="cogs", package=ext)
+            self.load_extension(package)
+            print('Loaded extension {}'.format(package))
 
 Reyackrr().run()

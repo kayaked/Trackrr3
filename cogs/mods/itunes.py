@@ -47,7 +47,8 @@ async def search_artist(artist):
             'date_birth':'Unknown',
             'latest_release':'N/A',
             'home_town':'Somewhere, Earth',
-            'image_url':'https://raw.githubusercontent.com/exofeel/Trackrr/master/assets/UnknownArtist.png'
+            'image_url':'https://raw.githubusercontent.com/exofeel/Trackrr/master/assets/UnknownArtist.png',
+            'genre':'All'
         }
         
         results = resp_json.get('results', [])
@@ -78,7 +79,7 @@ async def search_artist(artist):
             if artist_info['description'].__len__() > 500:
                 artist_info['description'] = artist_info['description'][:500] + f'[...]({result_url})'
         
-        # Get Birth date and Home-town
+        # Get Birth date, Genre and Home-town
         # cont == The containers on the page, such as DOB
         #find_cont = lambda cont: cont.find('dt', {'class':'we-truncate we-truncate--single-line ember-view we-about-artist-inline__details-label'})
         containers_raw = soup.find_all('div', {'class':'we-about-artist-inline__details-item'})
@@ -88,6 +89,9 @@ async def search_artist(artist):
         home_town_containers = [cont for cont in containers_raw if 'HOMETOWN' in getattr(cont, 'text', '')]
         if home_town_containers:
             artist_info['home_town'] = getattr(home_town_containers[0].find('dd'), 'text', 'Unknown').strip()
+        genre_containers = [cont for cont in containers_raw if 'GENRE' in getattr(cont, 'text', '')]
+        if genre_containers:
+            artist_info['genre'] = getattr(genre_containers[0].find('dd'), 'text', 'Unknown').strip()
         
         # Get Latest Release info. /name
         latest_release_raw = soup.find("span", {"class": "featured-album__text__headline targeted-link__target"})
@@ -104,7 +108,8 @@ async def search_artist(artist):
         embed.set_image(url=artist_info['image_url'])
         embed.add_field(name='Latest Release 🎵', value=artist_info['latest_release'])
         embed.add_field(name='Date of Birth 📆', value=artist_info['date_birth'])
-        embed.add_field(name='Hometown 📌', value=artist_info['home_town'], inline=False)
+        embed.add_field(name='Hometown 📌', value=artist_info['home_town'])
+        embed.add_field(name='Genre 🎤', value=artist_info['genre'])
         embed.add_field(name=f'About {artist_info["name"]} 🗒', value=artist_info['description'])
 
         return embed
