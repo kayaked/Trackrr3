@@ -71,15 +71,33 @@ For example, what if you want to search for **Pusha T**? Trackrr can do this too
 
 ![artist](https://i.gyazo.com/7d33394b56834ca32dc4c5db068806fe.png)
 
+**Top charts**
+
+Usage: ```^charts``` ```^charts albums```
+
+Ability to grab the latest top 100 charts (optionally albums) from Billboard.
+
+![charts](https://i.gyazo.com/641b366d17aa12b16254e373bcf4a452.png)
+
+**Trending**
+
+Usage: ```^trending``` ```^trending albums```
+
+Ability to grab the current trending songs (or optionally albums) from Genius.
+
+![trending](https://i.gyazo.com/eb28c98c6dd17bcc554f63942db816c9.png)
+
 ## What works?
 - Music search
 - Album search
 - Artist search
 - Local track search
+- Top Charts
 
 Trackrr will soon support:
 * **YouTube!!!**
 * **Napster**
+* **Certain VC stuff (Likely YouTube)**
 
 ## This bot can be adapted to suit any needs. Just remove any discord-oriented functions.
 # README.md from [https://github.com/exofeel/Trackrr](https://github.com/exofeel/Trackrr "hi exo")
