@@ -67,8 +67,6 @@ Usage: ```^search_artist artistname```
 
 For example, what if you want to search for **Pusha T**? Trackrr can do this too!
 
-```^search_artist Pusha T```
-
 ![artist](https://i.gyazo.com/7d33394b56834ca32dc4c5db068806fe.png)
 
 **Top charts**
@@ -87,6 +85,14 @@ Ability to grab the current trending songs (or optionally albums) from Genius.
 
 ![trending](https://i.gyazo.com/eb28c98c6dd17bcc554f63942db816c9.png)
 
+**Setting default service**
+
+Usage: ```^prefs service servicename```
+
+For example, let's say you want to search **Deezer** by default?
+
+![prefs](https://i.gyazo.com/430966da5afae93621a2f53a578b626b.png)
+
 ## What works?
 - Music search
 - Album search
@@ -100,6 +106,8 @@ Trackrr will soon support:
 * **Certain VC stuff (Likely YouTube)**
 
 This bot's DB functions only work on a Unix machine. Windows is currently not supported by Motor.
+
+Discord support server: https://discord.gg/PZVmCYS
 
 ## This bot can be adapted to suit any needs. Just remove any discord-oriented functions.
 # README.md from [https://github.com/exofeel/Trackrr](https://github.com/exofeel/Trackrr "hi exo")
