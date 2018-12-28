@@ -16,10 +16,14 @@ import cogs.mods.pandora as pandora
 import cogs.mods.base as base
 import datetime
 import random
+import motor.motor_asyncio
 import io
 import traceback
 from mutagen import id3
 import copy
+
+client = motor.motor_asyncio.AsyncIOMotorClient()
+db=client['Trackrr']
 
 class SearchSong:
 
@@ -43,51 +47,51 @@ class SearchSong:
         svc = song_name.split(' ')[0].lower()
         # Paginator for all services.
         if svc == 'all' and song_name:
+            current_service = await db.preferredsvc.find_one({'uid':ctx.author.id})
+            if not current_service:
+                current_service = 'spotify'
+            else:
+                current_service = current_service.get('service', 'spotify')
             index = 0
             async def get_embed():
                 embed = discord.Embed()
                 try:
-                    song = await globals().get(self.services[index]).search_song(' '.join(song_name.split(' ')[1:]))
+                    song = await globals().get(current_service).search_song(' '.join(song_name.split(' ')[1:]))
                     embed = self.song_format(song)
                 except base.NotFound:
-                    embed = discord.Embed(title='Trackrr', description=f'No results found for `{self.services[index]}`!')
-                embed.add_field(name=r'\⬅', value=self.services[index-1 if index else -1])
-                embed.add_field(name=r'\➡', value=self.services[index+1 if index+1 < len(self.services) else 0])
+                    embed = discord.Embed(title='Trackrr', description=f'No results found for `{current_service}`!')
                 return embed
             async with ctx.channel.typing():
                 m=await ctx.send(embed=await get_embed())
-            await m.add_reaction('⬅')
-            await m.add_reaction('➡')
-            emojis = ['⬅', '➡']
+            emojis = []
+            for service in self.services:
+                if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
+                    emojis.append([emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0])
+            for eji in emojis:
+                await m.add_reaction(eji)
             paging=True
             while paging:
                 try:
-                    reaction, user = await self.bot.wait_for('reaction_add', check=lambda r, u: str(r.emoji) in emojis and not u.bot, timeout=10)
+                    reaction, user = await self.bot.wait_for('reaction_add', check=lambda r, u: r.emoji in emojis and not u.bot, timeout=10)
                     try:
                         await m.remove_reaction(reaction, user)
                     except:
                         pass
-                    if str(reaction.emoji) == '⬅':
-                        if index:
-                            index-=1
-                        else:
-                            index=len(self.services)-1
-                    if str(reaction.emoji) == '➡':
-                        if index+1 < len(self.services):
-                            index+=1
-                        else:
-                            index=0
-                    await m.edit(embed=discord.Embed(title='Trackrr', description=f'🔍 Loading `{self.services[index]}`...'))
+                    current_service = reaction.emoji.name
+                    await m.edit(embed=discord.Embed(title='Trackrr', description=f'🔍 Loading `{current_service}`...'))
                     await m.edit(embed=await get_embed())
                 except:
                     paging=False
-                    await m.remove_reaction('⬅', ctx.guild.me)
-                    await m.remove_reaction('➡', ctx.guild.me)
-                    embed=m.embeds[0]
-                    embed.remove_field(-1)
-                    embed.remove_field(-1)
-                    await m.edit(embed=embed)
+                    for eji in emojis:
+                        await m.remove_reaction(eji, ctx.guild.me)
                     return
+
+        # Checks for a preferred service
+        if svc not in self.services and await db.preferredsvc.find_one({'uid':ctx.author.id}):
+            svc = await db.preferredsvc.find_one({'uid':ctx.author.id})
+            svc=svc.get('service', '')
+            song_name = svc + ' ' + song_name
+        
         #####
         if not song_name or svc not in self.services:
             services = copy.deepcopy(self.services)

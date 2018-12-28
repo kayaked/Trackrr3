@@ -65,11 +65,23 @@ async def search_album(album_name):
         if 'error' in response:
             raise NotFound(response['error'])
         
-        response = response.get('media', [])
-        if not response:
+        media = response.get('media', [])
+        if not media:
             raise NotFound('no media;')
-        response = response[0].get('tracks', [])
-        results['track_list'] = [ tr.get('title', '') for tr in response ]
+        trackraw = media[0].get('tracks', [])
+        results['track_list'] = [ tr.get('title', '') for tr in trackraw ]
+    
+    # Gets release date
+    release_date = response.get('date', '1970')
+    if release_date.count('-') == 2:
+        results['release_date'] = datetime.strptime(release_date, '%Y-%m-%d')
+    elif release_date.count('-') == 1:
+        results['release_date'] = datetime.strptime(release_date, '%Y-%m')
+    elif release_date.count('-') == 0:
+        results['release_date'] = datetime.strptime(release_date, '%Y')
+    else:
+        results['release_date'] = datetime.strptime('1970', '%Y')
+
     return MBAlbum(results)
 
 class MBAlbum(Album):
@@ -82,4 +94,4 @@ class MBAlbum(Album):
         self.link = data.get('url', 'https://musicbrainz.org/')
         self.track_list = data.get('track_list', [])
         self.cover_url = data.get('cover')
-        self.release_date = datetime.strptime(data.get('date', '1970-01-01'), '%Y-%m-%d')
+        self.release_date = data.get('release_date')

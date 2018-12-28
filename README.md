@@ -99,5 +99,7 @@ Trackrr will soon support:
 * **Napster**
 * **Certain VC stuff (Likely YouTube)**
 
+This bot's DB functions only work on a Unix machine. Windows is currently not supported by Motor.
+
 ## This bot can be adapted to suit any needs. Just remove any discord-oriented functions.
 # README.md from [https://github.com/exofeel/Trackrr](https://github.com/exofeel/Trackrr "hi exo")
