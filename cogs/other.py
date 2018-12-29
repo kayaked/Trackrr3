@@ -42,7 +42,7 @@ class Producers:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='producer_tag', aliases=['prod_by', 'prodby', 'producertag'])
+    @commands.command(name='producer_tag', aliases=['prod_by', 'prodby', 'producertag', 'producer', 'producers', 'producer_tags', 'producertags', 'prod', 'prods'])
     async def producer_tag(self, ctx, *, producer_name):
         async with ctx.channel.typing():
             lyrics, hit = await genius.get_song_lyrics('Rap Genius Producer Tags')
@@ -77,7 +77,7 @@ class Producers:
                 if producer_name.lower() in producer.get('name', '').lower():
                     final_producer = producer
                     break
-            embed = discord.Embed(title=final_producer['name'].strip(), description='\n'.join(final_producer['tags']))
+            embed = discord.Embed(title=final_producer['name'].strip(), description='*' + '\n'.join(final_producer['tags']) + '*')
             embed.set_footer(text=f"Trackrr Music Search | Data pulled from Genius", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
             await ctx.send(embed=embed)
 
