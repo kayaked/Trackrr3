@@ -13,6 +13,7 @@ import cogs.mods.mixtapemonkey as mixtapemonkey
 import cogs.mods.googleplay as googleplay
 import cogs.mods.spotify as spotify
 import cogs.mods.base as base
+import cogs.mods.napster as napster
 import cogs.mods.amazon as amazon
 import cogs.mods.bandcamp as bandcamp
 import copy
@@ -41,7 +42,8 @@ class SearchAlbum:
             'bandcamp',
             'spinrilla',
             'musicbrainz',
-            'mixtapemonkey'
+            'mixtapemonkey',
+            'napster'
         ]
 
     @commands.group(name='search_album', invoke_without_command=True, aliases=['album', 'searchalbum', 'albumsearch', 'album_search'])
@@ -57,7 +59,6 @@ class SearchAlbum:
                 current_service = 'spotify'
             else:
                 current_service = current_service.get('service', 'spotify')
-            index = 0
             async def get_embed():
                 embed = discord.Embed()
                 try:

@@ -12,6 +12,8 @@ import cogs.mods.deezer as deezer
 import cogs.mods.googleplay as googleplay
 import cogs.mods.spotify as spotify
 import cogs.mods.amazon as amazon
+import cogs.mods.bandcamp as bandcamp
+import cogs.mods.napster as napster
 import cogs.mods.pandora as pandora
 import cogs.mods.base as base
 import datetime
@@ -39,7 +41,9 @@ class SearchSong:
             'tidal',
             'lastfm',
             'spinrilla',
-            'pandora'
+            'pandora',
+            'napster',
+            'bandcamp'
         ]
 
     @commands.group(name='search_song', invoke_without_command=True, aliases=['search', 'search_track', 'song', 'track', 'tracksearch', 'searchtrack', 'searchsong', 'songsearch', 'song_search', 'track_search'])
@@ -55,7 +59,6 @@ class SearchSong:
                 current_service = 'spotify'
             else:
                 current_service = current_service.get('service', 'spotify')
-            index = 0
             async def get_embed():
                 embed = discord.Embed()
                 try:

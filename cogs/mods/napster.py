@@ -66,7 +66,7 @@ def construct_header():
 
 # http://direct.napster.com/imageserver/v2/albums/{album_id}/images/{size}.{extension}
 def return_image(album_id):
-    return "http://direct.napster.com/imageserver/v2/albums/{}/images/70x70.jpg".format(album_id)
+    return "http://direct.napster.com/imageserver/v2/albums/{}/images/500x500.jpg".format(album_id)
 
 
 async def return_album_info(session, album_id):
@@ -95,26 +95,29 @@ async def return_album_info(session, album_id):
         album_release_date_raw = dateutil.parser.parse(album_selected['released'])
 
         data = {
-            "AlbumURL": 'https://app.napster.com/' + album_selected['shortcut'],
+            "AlbumURL": 'https://us.napster.com/artist/' + album_selected['shortcut'].split('/')[0] + '/album/' + album_selected['shortcut'].split('/')[-1],
             "AlbumReleaseDate": album_release_date_raw,
-            "TrackList": tracks
+            "TrackList": tracks,
+            "AlbumCoverArt": return_image(album_id),
+            "AlbumArtist": album_selected.get('artistName', 'N/A'),
+            "AlbumName": album_selected.get('name', 'Unknown')
         }
         return data
 
 async def search_album(album_name):
     form = {}
     async with aiohttp.ClientSession() as session:
-        async with session.get(napsterAPI.SEARCH_BASE, headers=construct_header(), params=construct_param("album", album_name)) as session:
-            async with session.get(napsterAPI.SEARCH_BASE, headers=construct_header()) as resp:
-                resp_json = await resp.json()
-                try:
-                    album_selected = resp_json['search']['data']['albums'][0]
-                except KeyError:
-                    raise NotFound
+        async with session.get(napsterAPI.SEARCH_BASE, headers=construct_header(), params=construct_param("album", album_name)) as resp:
+            resp_json = await resp.json()
+            try:
+                album_selected = resp_json['search']['data']['albums'][0]
+            except KeyError:
+                raise NotFound
 
-                album_id = album_selected['id']
-                album_lookup = await return_album_info(session, album_name)
-                # in progress
+            album_id = album_selected['id']
+        album_lookup = await return_album_info(session, album_id)
+
+        return NapsterAlbum(album_lookup)
 
 async def search_song(song_name):
     form = {}
@@ -128,7 +131,7 @@ async def search_song(song_name):
 
             album_id = track_selected['albumId']
             try:
-                form['TrackName'] = track_selected['name'],
+                form['TrackName'] = track_selected['name']
                 form['TrackArtist'] = track_selected['artistName']
                 form['TrackAlbum'] = track_selected['albumName']
             except KeyError:
@@ -142,9 +145,10 @@ async def search_song(song_name):
                 pass
 
             try:
+                shortcut = track_selected['shortcut'].split('/')
                 form['TrackCoverArt'] = return_image(album_id)
                 form['TrackReleaseDate'] = album_lookup['AlbumReleaseDate']
-                form['TrackURL'] = album_lookup['AlbumURL']
+                form['TrackURL'] = 'https://us.napster.com/artist/' + shortcut[0] + '/album/' + shortcut[1] + '/track/' + shortcut[-1]
             except KeyError:
                 raise KeyError('Napster 131-138')
 
@@ -155,9 +159,21 @@ class NapsterSong(Song):
     def __init__(self, data:dict):
         self.color = 0x586474
         self.service = 'Napster'
-        self.name = data['TrackName'][0]
+        self.name = data['TrackName']
         self.artist = data['TrackArtist']
         self.link = data['TrackURL']
         self.cover_url = data['TrackCoverArt']
         self.track_album = data['TrackAlbum']
         self.release_date = data['TrackReleaseDate']
+
+class NapsterAlbum(Album):
+    
+    def __init__(self, data:dict):
+        self.color = 0x586474
+        self.service = 'Napster'
+        self.name = data['AlbumName']
+        self.artist = data['AlbumArtist']
+        self.link = data['AlbumURL']
+        self.cover_url = data['AlbumCoverArt']
+        self.track_list = data['TrackList']
+        self.release_date = data['AlbumReleaseDate']

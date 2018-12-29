@@ -1,6 +1,8 @@
 import aiohttp
 from .base import *
 from datetime import datetime
+import bs4
+import discord
 
 class GeniusAPI:
     BASE = 'https://genius.com/api'
@@ -65,6 +67,29 @@ async def search_song(song_name):
 
 
         return GeniusSong(hits)
+
+async def get_song_lyrics(song_name):
+
+    async with aiohttp.ClientSession() as session:
+        # Searches songs on Genius (example: https://genius.com/api/search/songs?q=Watch)
+        async with session.get(GeniusAPI.BASE + '/search/songs', params={'q': song_name}) as resp:
+            resp_json = await resp.json()
+
+        hits = resp_json.get('response', {}).get('sections', [])
+        if not hits:
+            raise NotFound
+        hits = hits[0].get('hits')
+        if not hits:
+            raise NotFound
+        hit = hits[0].get('result', {})
+        url = hit.get('url', 'https://genius.com/')
+        async with session.get(url) as resp:
+            lyric_raw_text = await resp.text()
+
+        lyrics = bs4.BeautifulSoup(lyric_raw_text, 'lxml').find('div', class_='lyrics')
+
+        return lyrics, hit
+
 
 class GeniusAlbum(Album):
 
