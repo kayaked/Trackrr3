@@ -37,7 +37,7 @@ class Help:
         embed.set_footer(text="Trackrr Music Search | Created by exofeel#3333 X Yak#7474", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
         await ctx.send(embed=embed)
 
-    @commands.command(name='faq', aliases=['questions', ])
+    @commands.command(name='faq', aliases=['questions'])
     async def _faq(self, ctx):
         embed = discord.Embed(title='Trackrr 3 - Frequently Asked Questions', description=faq, timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
         embed.set_footer(text="Trackrr Music Search | Created by exofeel#3333 X Yak#7474", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")

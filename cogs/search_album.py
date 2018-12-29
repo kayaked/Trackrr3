@@ -57,7 +57,6 @@ class SearchAlbum:
                 current_service = 'spotify'
             else:
                 current_service = current_service.get('service', 'spotify')
-            index = 0
             async def get_embed():
                 embed = discord.Embed()
                 try:
