@@ -10,7 +10,8 @@ class Lyrics:
     @commands.command(name='lyrics')
     async def lyrics(self, ctx, *, song_name):
         async with ctx.channel.typing():
-            lyrics, hit = getattr(await genius.get_song_lyrics(song_name), 'text', 'Lyrics not found.').strip('\n')
+            lyrics, hit = await genius.get_song_lyrics(song_name)
+            lyrics = getattr(lyrics, 'text', 'Lyrics not found.').strip('\n')
             lyrics_split = []
             lyrics_rawsplit = lyrics.split('\n')
             lyrics_segment = []
@@ -32,7 +33,7 @@ class Lyrics:
                 lyrics_split[-1] += f'[...]({hit.get("url", "")})'
                 lyrics_split[-1] = lyrics_split[-1][:2048]
             for segment in lyrics_split:
-                embed = discord.Embed(title=hit.get('title', 'Trackrr') + ' <:genius:528067300520362014>', description=segment)
+                embed = discord.Embed(title=hit.get('title', 'Trackrr') + ' by ' + hit.get('primary_artist', {}).get('name', 'N/A') + ' <:genius:528067300520362014>', description=segment, url=hit.get("url", "https://genius.com/"))
                 embed.set_thumbnail(url=hit.get('header_image_url', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true'))
                 embed.set_footer(text=f"Trackrr Music Search | Data pulled from Genius", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
                 await ctx.send(embed=embed)
@@ -46,6 +47,7 @@ class Producers:
     async def producer_tag(self, ctx, *, producer_name):
         async with ctx.channel.typing():
             lyrics, hit = await genius.get_song_lyrics('Rap Genius Producer Tags')
+            hit
             producers = []
             prev_elem = 'b'
             # Scrapes the producer tags from Rap Genius's Producer tag library.
