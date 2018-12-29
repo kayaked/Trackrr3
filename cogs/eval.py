@@ -14,7 +14,10 @@ from contextlib import redirect_stdout
 import io
 import calendar, datetime
 
-import pyduktape
+try:
+    import pyduktape
+except Exception:
+    pass
 from os import listdir
 from os.path import isfile, join
 # to expose to the eval command
