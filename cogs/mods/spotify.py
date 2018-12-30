@@ -20,35 +20,6 @@ async def authorize_spotify():
     await spotify.authorize_client_creds()
     return spotify
 
-# Gets Track ID
-async def get_track(track):
-    spotify = await authorize_spotify()
-
-    try:
-        spotify_query = await spotify.tracks(track_ids=track)
-        track_selected = spotify_query['album']
-    except Exception as e:
-        raise SpotifyError("Either the API is down, or a weird ass error has occured. Try again.\n" + e)
-
-    # TODO: add support for multple artists
-    async def track_artist():
-        try:
-            return track_selected['artists'][0]['name']
-        except IndexError:
-            raise NotFound("No Results found for spotify")
-        except Exception:
-            raise NotFound("Error!")
-
-    async def track_name():
-        try:
-            return track_selected['name']
-        except IndexError:
-            raise NotFound("No Results found for spotify")
-        except Exception:
-            raise NotFound("Error!")
-
-     # i'm tired gonna finish in the morning
-
 
 async def search_song(song_name):
     """ Searches a track by name on the official Spotify API using PyFy."""
