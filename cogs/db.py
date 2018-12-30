@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import motor.motor_asyncio
 import copy
+import random
 import datetime
 
 client = motor.motor_asyncio.AsyncIOMotorClient()
@@ -14,7 +15,23 @@ class DBFunctions:
     
     @commands.group(name='prefs', invoke_without_command=True)
     async def prefs(self, ctx):
-        await ctx.send(':tools:')
+        cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
+        description = f"""
+`{cmdprefix}{ctx.invoked_with} <option> <value>`
+Example: `{cmdprefix}{ctx.invoked_with} service spotify`
+
+__**Options:**__
+
+__Guild - {ctx.guild.name}__
+prefix - Change Trackrr's prefix for the current guild (`Administrator` only)
+
+__User - {ctx.author}__
+service - Add/change your preferred music source. This lets you use search commands without specifying a service.
+
+        """.strip()
+        embed = discord.Embed(title='Trackrr Preferences 🛠', description=description, color=discord.Color(random.randint(0x000000, 0xffffff)))
+        embed.set_footer(text="Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
+        await ctx.send(embed=embed)
     
     @prefs.command(name='service')
     async def prefs_service(self, ctx, svc=None):
