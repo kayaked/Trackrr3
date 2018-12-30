@@ -24,6 +24,7 @@ import traceback
 from mutagen import id3
 import copy
 
+
 client = motor.motor_asyncio.AsyncIOMotorClient()
 db=client['Trackrr']
 
@@ -45,6 +46,27 @@ class SearchSong:
             'napster',
             'bandcamp'
         ]
+
+
+    # Basic support for search_playing
+    @commands.command(name='search_playing', invoke_without_command=True)
+    async def search_playing(self, ctx, member:discord.Member, service):
+        if service.lower() in self.services:
+            user_activity = member.activity
+            if isinstance(user_activity, discord.Spotify):
+
+                form = {
+                    "SongName": user_activity.title,
+                    "SongArtist": user_activity.artist,
+                    "SongAlbum": user_activity.album,
+                    "TrackID": user_activity.track_id
+                }
+                await ctx.send(form)
+            else:
+                await ctx.send('not spotify acitvity')
+            
+        else:
+            await ctx.send('service not specified or not a valid service.')
 
     @commands.group(name='search_song', invoke_without_command=True, aliases=['search', 'search_track', 'song', 'track', 'tracksearch', 'searchtrack', 'searchsong', 'songsearch', 'song_search', 'track_search'])
     async def search_song(self, ctx, *, song_name=None):
