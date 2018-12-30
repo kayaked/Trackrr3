@@ -144,8 +144,9 @@ class SearchSong:
                 if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
                     emoji = [emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0]
                     services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
-            services.append('🎵 `all`')
             cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
+            services.append('🎵 `all`')
+            services.append(f'To use this command without a service, run `{cmdprefix}prefs service <service>` to set a default search service.')
             embed = discord.Embed(title=f'List of available services for {cmdprefix}search_song', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
             embed.set_footer(text="Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
             return await ctx.send(embed=embed)
