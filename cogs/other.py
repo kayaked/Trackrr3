@@ -1,11 +1,47 @@
 import discord
 from discord.ext import commands
 import cogs.mods.genius as genius
+from datetime import datetime
+
 
 class Lyrics:
 
     def __init__(self, bot):
         self.bot = bot
+
+
+
+    @commands.command(name='yandhi')
+    async def yandhi(self, ctx):
+        
+        # release YANDHI kanye
+        before_date = datetime(2018, 9, 28, 0, 0)
+        after_date = datetime.now()
+
+        def get_days_passed(before, after):
+            d1 = before.date()
+            d2 = after.date()
+            return abs(d1 - d2).days
+
+        number_of_days = get_days_passed(before_date, after_date)
+        embed = discord.Embed(title="It has been {} days since YANDHI's announcement date.".format(number_of_days))
+        await ctx.send(embed=embed)
+
+    @commands.command(name='bobby')
+    async def bobby(self, ctx):
+        # free bobby shmurda
+
+        after_date = datetime(2020, 12, 1, 0, 0)
+        before_date = datetime.now()
+
+        def get_days_passed(before, after):
+            d1 = before.date()
+            d2 = after.date()
+            return abs(d1 - d2).days
+
+        number_of_days = get_days_passed(before_date, after_date)
+        embed = discord.Embed(title="{} days until Bobby Shmurda is FREE! 🙏".format(number_of_days))
+        await ctx.send(embed=embed)
 
     @commands.command(name='lyrics')
     async def lyrics(self, ctx, *, song_name):
