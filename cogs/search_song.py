@@ -24,10 +24,17 @@ import io
 import traceback
 from mutagen import id3
 import copy
+import json
 
 
 client = motor.motor_asyncio.AsyncIOMotorClient()
 db=client['Trackrr']
+
+
+dev_picks = json.load(open('dev_notes.json', 'r', encoding='utf-8'))
+
+
+
 
 class SearchSong:
 
@@ -166,7 +173,15 @@ class SearchSong:
         embed.add_field(name='Name', value=album.name, inline=False)
         embed.add_field(name='Artist(s)', value=album.artist, inline=False)
         embed.add_field(name='Released', value=album.release_date.strftime('%B %-d, %Y'), inline=False)
-        embed.add_field(name='Album', value=album.track_album, inline=False)
+        
+
+        try:
+            dev_info = dev_picks[album.track_album]
+            embed.add_field(name='Album', value=album.track_album)
+            embed.add_field(name="Dev Note", value=dev_info, inline=False)
+        except Exception:
+            embed.add_field(name='Album', value=album.track_album, inline=False)
+
         embed.set_footer(text=f"Trackrr Music Search | Data pulled from {album.service}", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
         embed.set_thumbnail(url=album.cover_url)
 
