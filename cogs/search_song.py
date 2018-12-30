@@ -153,6 +153,7 @@ class SearchSong:
                     services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
             cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
             services.append('🎵 `all`')
+            services.insert(0, f'`{cmdprefix}{ctx.invoked_with} <service/all> <*song name>`')
             services.append(f'To use this command without a service, run `{cmdprefix}prefs service <service>` to set a default search service.')
             embed = discord.Embed(title=f'List of available services for {cmdprefix}search_song', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
             embed.set_footer(text="Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
@@ -193,7 +194,11 @@ class SearchSong:
     @commands.command(name='upload_song', aliases=['upload_track'])
     async def upload_track(self, ctx, service=None):
         if not ctx.message.attachments:
-            return await ctx.send('Please attach a file!')
+            cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
+            embed = discord.Embed(color=random.randint(0x000000, 0xffffff), title=f'Help for `{cmdprefix}{ctx.invoked_with}`', description=f'`{cmdprefix}{ctx.invoked_with} [optional service] {"{ATTACHED MP3}"}`')
+            embed.set_image(url='https://cdn.discordapp.com/attachments/528057306185990175/529039264122404865/4f60da11f38df6119dea86b0fe2883a8.png')
+            embed.set_footer(text=f"Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
+            return await ctx.send(embed=embed)
         
         async with aiohttp.ClientSession() as session:
             async with session.get(ctx.message.attachments[0].url) as resp:
@@ -203,31 +208,37 @@ class SearchSong:
 
         raw=id3.ID3(raw)
 
-        date = raw.get('TDRL')
+        file_name = ', '.join(raw.get('TIT2').text)
 
-        if not date:
-            date = raw.get('TDRC')
+        if not service:
+            date = raw.get('TDRL')
 
-        class TempTrack:
-            link = ctx.message.attachments[0].url
-            service = 'computer'
-            name = ', '.join(raw.get('TIT2').text)
-            track_album = ', '.join(raw.get('TALB').text)
-            cover_url = 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true'
-            release_date = str(getattr(date, 'text', ['1970'])[0])
-            artist = ', '.join(raw.get('TPE1').text)
-        embed = self.song_format(TempTrack)
-        embed.title = embed.title + ' 🖥'
-        embed.set_footer(text="Trackrr Music Search | Data pulled from ID3 tags using Mutagen", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
-        file = {}
-        if any([key.startswith('APIC:') for key in list(raw.keys())]):
-            keyname = [key for key in list(raw.keys()) if key.startswith('APIC')][0]
-            buffer = io.BytesIO(raw.get(keyname).data)
-            file['file'] = discord.File(buffer, filename="image.png")
-            embed.set_thumbnail(url="attachment://image.png")
+            if not date:
+                date = raw.get('TDRC')
+
+            class TempTrack:
+                link = ctx.message.attachments[0].url
+                service = 'computer'
+                name = file_name
+                track_album = ', '.join(raw.get('TALB').text)
+                cover_url = 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true'
+                release_date = str(getattr(date, 'text', ['1970'])[0])
+                artist = ', '.join(raw.get('TPE1').text)
+            embed = self.song_format(TempTrack)
+            embed.title = embed.title + ' 🖥'
+            embed.set_footer(text="Trackrr Music Search | Data pulled from ID3 tags using Mutagen", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
+            file = {}
+            if any([key.startswith('APIC:') for key in list(raw.keys())]):
+                keyname = [key for key in list(raw.keys()) if key.startswith('APIC')][0]
+                buffer = io.BytesIO(raw.get(keyname).data)
+                file['file'] = discord.File(buffer, filename="image.png")
+                embed.set_thumbnail(url="attachment://image.png")
+            else:
+                embed.set_thumbnail(url='https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
+            await ctx.send(**file, embed=embed)
         else:
-            embed.set_thumbnail(url='https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
-        await ctx.send(**file, embed=embed)
+            cmd = self.bot.get_command('search_song')
+            await ctx.invoke(cmd, song_name="{} {}".format(service, file_name))
         
 
 def setup(bot):

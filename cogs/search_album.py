@@ -80,7 +80,7 @@ class SearchAlbum:
             paging=True
             while paging:
                 try:
-                    reaction, user = await self.bot.wait_for('reaction_add', check=lambda r, u: r.emoji in emojis and not u.bot, timeout=10)
+                    reaction, user = await self.bot.wait_for('reaction_add', check=lambda r, u: r.emoji in emojis and not u.bot, timeout=25)
                     try:
                         await m.remove_reaction(reaction, user)
                     except:
@@ -110,6 +110,7 @@ class SearchAlbum:
                     services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
             cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
             services.append('🎵 `all`')
+            services.insert(0, f'`{cmdprefix}{ctx.invoked_with} <service/all> <*album name>`')
             services.append(f'To use this command without a service, run `{cmdprefix}prefs service <service>` to set a default search service.')
             embed = discord.Embed(title=f'List of available services for {cmdprefix}search_album', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
             embed.set_footer(text="Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
