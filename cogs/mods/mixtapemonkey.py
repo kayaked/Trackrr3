@@ -56,4 +56,4 @@ class MonkeyAlbum(Album):
         self.link = data.get('link', 'https://mixtapemonkey.com/')
         self.track_list = data.get('track_list', [])
         self.cover_url = data.get('cover_url', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true').replace('_thumb', '')
-        self.release_date = datetime.strptime(data.get('release_date', '1970'), '%Y')
+        self.release_date = data.get('release_date', '1970')

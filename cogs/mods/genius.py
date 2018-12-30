@@ -62,9 +62,6 @@ async def search_song(song_name):
 
         hits = resp2_json.get('response', {}).get('song', {})
 
-        if not hits.get('release_date'):
-            hits['release_date'] = '1970-01-01'
-
 
         return GeniusSong(hits)
 
@@ -101,7 +98,7 @@ class GeniusAlbum(Album):
         self.link = data.get('url', 'https://genius.com/')
         self.track_list = data.get('track_list')
         self.cover_url = data.get('cover_art_url', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
-        self.release_date = datetime.strptime(data.get('release_date', '1970-01-01'), '%Y-%m-%d')
+        self.release_date = datetime.strptime(data.get('release_date'), '%Y-%m-%d') if data.get('release_date') else 'Unknown'
 
 class GeniusSong(Song):
 
@@ -113,4 +110,4 @@ class GeniusSong(Song):
         self.link = data.get('url', 'https://genius.com/')
         self.track_album = ', '.join([album.get('name') for album in data.get('albums')]) if data.get('albums') else 'N/A'
         self.cover_url = data.get('song_art_image_url', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
-        self.release_date = datetime.strptime(data.get('release_date', '1970-01-01'), '%Y-%m-%d')
+        self.release_date = datetime.strptime(data.get('release_date'), '%Y-%m-%d') if data.get('release_date') else 'Unknown'

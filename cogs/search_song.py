@@ -171,9 +171,11 @@ class SearchSong:
         if [emoji for emoji in self.bot.emojis if emoji.name == getattr(album, 'service', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa').lower()]:
             emoji = [emoji for emoji in self.bot.emojis if emoji.name == album.service.lower()][0]
             embed.title = embed.title + f' <:{emoji.name}:{emoji.id}>'
+        if isinstance(album.release_date, datetime.datetime):
+            album.release_date = album.release_date.strftime('%B %-d, %Y')
         embed.add_field(name='Name', value=album.name, inline=False)
         embed.add_field(name='Artist(s)', value=album.artist, inline=False)
-        embed.add_field(name='Released', value=album.release_date.strftime('%B %-d, %Y'), inline=False)
+        embed.add_field(name='Released', value=album.release_date, inline=False)
         
 
         try:
@@ -212,7 +214,7 @@ class SearchSong:
             name = ', '.join(raw.get('TIT2').text)
             track_album = ', '.join(raw.get('TALB').text)
             cover_url = 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true'
-            release_date = datetime.datetime.strptime(str(getattr(date, 'text', ['1970'])[0]), '%Y')
+            release_date = str(getattr(date, 'text', ['1970'])[0])
             artist = ', '.join(raw.get('TPE1').text)
         embed = self.song_format(TempTrack)
         embed.title = embed.title + ' 🖥'

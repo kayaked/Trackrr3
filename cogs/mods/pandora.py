@@ -41,4 +41,4 @@ class PandoraSong(Song):
         self.link = data.get('trackDetailUrl', 'https://pandora.com/')
         self.cover_url = data.get('albumArt')[-1].get('url')
         self.track_album = data.get('albumTitle', 'N/A')
-        self.release_date = datetime.strptime('1970-01-01', '%Y-%m-%d')
+        self.release_date = 'Unknown'

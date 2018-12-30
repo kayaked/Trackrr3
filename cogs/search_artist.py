@@ -9,6 +9,8 @@ class ArtistSearch:
         self.bot = bot
 
     @commands.command(name='search_artist', aliases=['creator', 'artist', 'person', 'musician', 'people', 'search_person', 'search_musician', 'search_creator', 'searchartist', 'artist_search'])
+    @commands.cooldown(10, 4, commands.BucketType.guild)
+    @commands.cooldown(1, 3, commands.BucketType.user)
     async def search_artist(self, ctx, *, artist_name=None):
         if not artist_name:
             cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]

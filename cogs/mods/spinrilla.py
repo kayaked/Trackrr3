@@ -72,7 +72,7 @@ class SpinrillaAlbum(Album):
         self.link = data.get('url', 'http://spinrilla.com/')
         self.track_list = data.get('track_list', [])
         self.cover_url = data.get('cover', {}).get('large', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
-        self.release_date = datetime.fromtimestamp(data.get('released_at', 18000))
+        self.release_date = datetime.fromtimestamp(data.get('released_at')) if data.get('released_at') is not None else 'Unknown'
 
 class SpinrillaSong(Song):
 
@@ -85,4 +85,4 @@ class SpinrillaSong(Song):
         self.cover_url = data.get('cover', {}).get('large', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
         self.track_album = data.get('album', {}).get('title', 'N/A') if data.get('album') else 'N/A'
         # Spinrilla does not provide the release date of their tracks anywhere onsite AFAIK, just albums.
-        self.release_date = datetime.fromtimestamp(data.get('released_at', 18000))
+        self.release_date = datetime.fromtimestamp(data.get('released_at')) if data.get('released_at') is not None else 'Unknown'

@@ -86,15 +86,15 @@ async def search_song(song_name):
         album_release_date_type = album_selected['release_date_precision']
         try:
             if album_release_date_type == "day":
-               parsed_time = datetime.strptime(album_release_date, "%Y-%m-%d")
+               parsed_time = datetime.strptime(album_release_date, "%Y-%m-%d").strftime('%B %-d, %Y')
                return parsed_time
             elif album_release_date_type == "month":
-                parsed_time = datetime.strptime(album_release_date, "%Y-%m")
+                parsed_time = datetime.strptime(album_release_date, "%Y-%m").strftime('%B %Y')
                 return parsed_time
-            elif parsed_time == "year":
-                return datetime.strptime(album_release_date, "%Y")
+            elif album_release_date_type == "year":
+                return album_release_date
         except Exception:
-            return "Unknown!"
+            return datetime(1970, 1, 1)
 
     info = {
         "TrackName": await track_name(),
@@ -118,8 +118,6 @@ async def search_album(album_name):
         raise NotFound
     except Exception as error:
         return error
-
-    
 
     async def get_album_name():
         try:
@@ -169,13 +167,13 @@ async def search_album(album_name):
         album_release_date_type = album_selected['release_date_precision']
         try:
             if album_release_date_type == "day":
-               parsed_time = datetime.strptime(album_release_date, "%Y-%m-%d")
+               parsed_time = datetime.strptime(album_release_date, "%Y-%m-%d").strftime('%B %-d, %Y')
                return parsed_time
             elif album_release_date_type == "month":
-                parsed_time = datetime.strptime(album_release_date, "%Y-%m")
+                parsed_time = datetime.strptime(album_release_date, "%Y-%m").strftime('%B %Y')
                 return parsed_time
-            elif parsed_time == "year":
-                return datetime.strptime(album_release_date, "%Y")
+            elif album_release_date_type == "year":
+                return album_release_date
         except Exception:
             return "Unknown!"
 

@@ -74,13 +74,13 @@ async def search_album(album_name):
     # Gets release date
     release_date = response.get('date', '1970')
     if release_date.count('-') == 2:
-        results['release_date'] = datetime.strptime(release_date, '%Y-%m-%d')
+        results['release_date'] = datetime.strptime(release_date, '%Y-%m-%d').strftime('%B %-d, %Y')
     elif release_date.count('-') == 1:
-        results['release_date'] = datetime.strptime(release_date, '%Y-%m')
+        results['release_date'] = datetime.strptime(release_date, '%Y-%m').strftime('%B %Y')
     elif release_date.count('-') == 0:
-        results['release_date'] = datetime.strptime(release_date, '%Y')
+        results['release_date'] = release_date
     else:
-        results['release_date'] = datetime.strptime('1970', '%Y')
+        results['release_date'] = '1970'
 
     return MBAlbum(results)
 

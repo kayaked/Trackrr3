@@ -84,7 +84,7 @@ class LFMAlbum(Album):
         self.link = data.get('url', 'https://last.fm/')
         self.track_list = data.get('track_list')
         self.cover_url = data.get('image', [])[-1].get('#text', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
-        self.release_date = datetime.today()
+        self.release_date = 'Unknown'
 
 class LFMSong(Song):
 
@@ -96,4 +96,4 @@ class LFMSong(Song):
         self.link = data.get('url', 'https://last.fm/')
         self.track_album = data.get('track_album')
         self.cover_url = data.get('cover_url')
-        self.release_date = datetime.today()
+        self.release_date = 'Unknown'

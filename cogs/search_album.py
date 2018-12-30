@@ -130,9 +130,11 @@ class SearchAlbum:
         if [emoji for emoji in self.bot.emojis if emoji.name == getattr(album, 'service', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa').lower()]:
             emoji = [emoji for emoji in self.bot.emojis if emoji.name == album.service.lower()][0]
             embed.title = embed.title + f' <:{emoji.name}:{emoji.id}>'
+        if isinstance(album.release_date, datetime.datetime):
+            album.release_date = album.release_date.strftime('%B %-d, %Y')
         embed.add_field(name='Name', value=album.name, inline=False)
         embed.add_field(name='Artist(s)', value=album.artist, inline=False)
-        embed.add_field(name='Released', value=album.release_date.strftime('%B %-d, %Y'), inline=False)
+        embed.add_field(name='Released', value=album.release_date, inline=False)
         embed.add_field(name='Track List', value='\n'.join(album.track_list).replace('*', r'\*') if album.track_list else 'Unknown', inline=False)
         embed.set_footer(text=f"Trackrr Music Search | Data pulled from {album.service}", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
         embed.set_thumbnail(url=album.cover_url)
