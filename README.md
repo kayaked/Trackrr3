@@ -12,6 +12,7 @@ Trackrr supports the following top music sources:
 * **Apple Music**
 * **SoundCloud**
 * **Amazon Music**
+* **YouTube Music**
 * **Deezer**
 * **Google Play Music**
 * **Genius**
@@ -102,7 +103,6 @@ For example, let's say you want to search **Deezer** by default?
 - Top Charts
 
 Trackrr will soon support:
-* **YouTube!!!**
 * **Certain VC stuff (Likely YouTube)**
 
 This bot's DB functions only work on a Unix machine. Windows is currently not supported by Motor.

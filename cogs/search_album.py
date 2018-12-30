@@ -9,6 +9,7 @@ import cogs.mods.tidal as tidal
 import cogs.mods.spinrilla as spinrilla
 import cogs.mods.musicbrainz as musicbrainz
 import cogs.mods.deezer as deezer
+import cogs.mods.youtube as youtube
 import cogs.mods.mixtapemonkey as mixtapemonkey
 import cogs.mods.googleplay as googleplay
 import cogs.mods.spotify as spotify
@@ -43,7 +44,8 @@ class SearchAlbum:
             'spinrilla',
             'musicbrainz',
             'mixtapemonkey',
-            'napster'
+            'napster',
+            'youtube'
         ]
 
     @commands.group(name='search_album', invoke_without_command=True, aliases=['album', 'searchalbum', 'albumsearch', 'album_search'])
