@@ -46,16 +46,7 @@ def construct_param(type, search_term:str):
 # To Do: Random Generate User Agent
 def construct_header():
     headers = {
-    'Origin': 'https://app.napster.com',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Accept-Language': 'en-US,en;q=0.9',
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
-    'Content-Type': 'application/json',
-    'Accept': 'application/json, text/javascript, /; q=0.01',
-    'Referer': 'https://app.napster.com/search/tracks?query=lol',
     'apikey': Keys.DEV_NAPSTERAPI,
-    'Connection': 'keep-alive',
-    'Accept-Version': '2.0.0',
     }
     return headers
 
