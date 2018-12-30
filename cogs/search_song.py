@@ -52,7 +52,14 @@ class SearchSong:
 
     # Basic support for search_playing
     @commands.command(name='search_playing', invoke_without_command=True)
-    async def search_playing(self, ctx, member:discord.Member, service):
+    async def search_playing(self, ctx, member:discord.Member, service="spotify"):
+        # Section for how args are formatted.
+        if isinstance(member, str) and not service:
+            service = member
+            member = ctx.author
+        if not member:
+            member = ctx.author
+
         if service.lower() in self.services:
             user_activity = member.activity
             if isinstance(user_activity, discord.Spotify):
@@ -61,9 +68,17 @@ class SearchSong:
                     "SongName": user_activity.title,
                     "SongArtist": user_activity.artist,
                     "SongAlbum": user_activity.album,
-                    "TrackID": user_activity.track_id
+                    "TrackID": user_activity.track_id,
+                    "SongAlbumCover": user_activity.album_cover_url
                 }
-                await ctx.send(form)
+                song_name = "{} {}".format(form['SongName'], form['SongArtist'])
+                await ctx.send("🎧 Here's what {} is currently listening to!".format(member.mention))
+
+
+                cmd = self.bot.get_command('search_song')
+                await ctx.invoke(cmd, song_name="all {}".format(song_name))
+
+
             else:
                 await ctx.send('not spotify acitvity')
             
