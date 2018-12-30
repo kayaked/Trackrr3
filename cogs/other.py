@@ -15,14 +15,13 @@ class Lyrics:
             lyrics_split = []
             lyrics_rawsplit = lyrics.split('\n')
             lyrics_segment = []
-            for line in lyrics_rawsplit:
-                if ('\n'.join(lyrics_segment) + '\n' + line).__len__() <= 2000:
-                    lyrics_segment.append(line)
+            for line in range(0, len(lyrics_rawsplit)):
+                if ('\n'.join(lyrics_segment) + '\n' + lyrics_rawsplit[line]).__len__() <= 2000:
+                    lyrics_segment.append(lyrics_rawsplit[line])
                 else:
                     lyrics_split.append('\n'.join(lyrics_segment))
-                    lyrics_segment = [line]
-                if lyrics_rawsplit.index(line) == len(lyrics_rawsplit)-1:
-                    print("end of stream!")
+                    lyrics_segment = [lyrics_rawsplit[line]]
+                if line == len(lyrics_rawsplit)-1:
                     lyrics_split.append('\n'.join(lyrics_segment))
                     break
 

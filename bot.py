@@ -17,7 +17,7 @@ ____________________________________________________
 """.strip()
 
 # Don't forget to disable before pushing..
-debug_mode = True
+debug_mode = False
 
 
 async def prefix_func(bot, msg):
