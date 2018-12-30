@@ -16,6 +16,10 @@ ____________________________________________________
 
 """.strip()
 
+# Don't forget to disable before pushing..
+debug_mode = True
+
+
 async def prefix_func(bot, msg):
     prefixes = [f'<@!{bot.user.id}> ', f'<@{bot.user.id}> ', '^']
     prefix = await db.preferredsvc.find_one({'gid':msg.guild.id})
@@ -26,7 +30,10 @@ async def prefix_func(bot, msg):
 class Reyackrr(commands.Bot):
     def __init__(self):
         self.token = Keys.DISCORDTOKEN
-        super().__init__(command_prefix=prefix_func)
+        if debug_mode == True:
+            super().__init__(command_prefix="?")
+        else:
+            super().__init__(command_prefix=prefix_func)
         self.remove_command('help')
 
     def run(self, token=None):
