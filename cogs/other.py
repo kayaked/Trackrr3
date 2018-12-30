@@ -74,7 +74,6 @@ class Producers:
                     producers.append(producer)
 
             final_producer = {'name':'Unknown', 'tags':['N/A']}
-            print(producers)
             for producer in producers:
                 if producer_name.lower() in producer.get('name', '').lower():
                     final_producer = producer
