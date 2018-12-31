@@ -4,23 +4,10 @@ import cogs.mods.genius as genius
 from datetime import datetime
 import motor.motor_asyncio
 
-from cogs.mods.keys import Keys
-
-from pyfy import AsyncSpotify, ClientCreds
-
+import cogs.mods.spotify as spotify 
 
 client = motor.motor_asyncio.AsyncIOMotorClient()
 db = client['Trackrr']
-
-async def authorize_spotify():
-    """ Authoirzies Spotify using PyFy's Method """
-    client = ClientCreds(
-        client_id=Keys.SPOTIFYCLIENT,
-        client_secret=Keys.SPOTIFYSECRET
-    )
-    spotify = AsyncSpotify(client_creds=client)
-    await spotify.authorize_client_creds()
-    return spotify
 
 
 class AudioInfomation:
@@ -29,16 +16,46 @@ class AudioInfomation:
 
     @commands.command(name='analyze', aliases=['analyse', 'advanced_info', 'adv_info'])
     async def analyze(self, ctx):
+        
+        # Discord User Information
         user_activity = ctx.author.activity
-        spotify = await authorize_spotify()
-        if isinstance(user_activity, discord.Spotify):
 
-            track_info = await spotify.tracks_audio_features(user_activity.track_id)
-            track_name = user_activity.title
-            track_cover_art = user_activity.album_cover_url
+        # Discord provided Track Information
+        track_name = user_activity.title
+        track_cover_art = user_activity.album_cover_url
+
+        if isinstance(user_activity, discord.Spotify) == True:
+
+
+            track_info_get = await spotify.analyze_song(user_activity.track_id)
+
+
+            # Create Local Dict for embed
+            track_info = {}
+
+            for key, value in track_info_get.items():
+
+                embed_values = [
+                    "duration_ms", "key", "mode", "time_signature", "danceability",
+                    "energy", "instrumentalness", "liveness", "speechiness", "loudness",
+                    "valence", "tempo"
+                ]
+
+                if key in embed_values:
+                    
+                    # Add to Dict
+                    track_info[key] = value
+
+                else:
+                    pass
+
+
+
 
             embed = discord.Embed(title="Audio Analysis", description="Here is detailed information about the track  " + track_name)
             embed.set_thumbnail(url=track_cover_art)
+            
+            """
             embed.add_field(name="Duration (in ms)", value=track_info['duration_ms'], inline=True)
             embed.add_field(name="Key", value=track_info['key'], inline=True)
             embed.add_field(name="Mode", value=track_info['mode'], inline=True)
@@ -51,6 +68,26 @@ class AudioInfomation:
             embed.add_field(name="Loudness", value=track_info['loudness'], inline=True)
             embed.add_field(name="Valence", value=track_info['valence'], inline=True)
             embed.add_field(name="BPM", value=round(track_info['tempo']), inline=True)
+            embed.add_field(name="Have no idea what these mean?", value="[Learn more about these values and what they mean](https://www.reddit.com/user/exofeel/comments/ab2aw3/trackrr_what_do_the_values_mean/)")
+            """
+
+            # I'm gonna try somethin crazy
+
+            for key, value in track_info.items():
+            
+                values_ignore = [
+                    'analysis_url', 
+                    'track_href', 
+                    'uri', 
+                    'type',
+                ]
+
+                if key in values_ignore:
+                    pass
+
+                else:
+                    embed.add_field(name=key, value=value, inline=True)
+
             embed.add_field(name="Have no idea what these mean?", value="[Learn more about these values and what they mean](https://www.reddit.com/user/exofeel/comments/ab2aw3/trackrr_what_do_the_values_mean/)")
             await ctx.send(embed=embed)
         else:
