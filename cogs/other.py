@@ -20,13 +20,13 @@ class AudioInfomation:
         # Discord User Information
         user_activity = ctx.author.activity
 
-        # Discord provided Track Information
-        track_name = user_activity.title
-        track_cover_art = user_activity.album_cover_url
-
         if isinstance(user_activity, discord.Spotify) == True:
 
+            # Discord provided Track Information
+            track_name = user_activity.title
+            track_cover_art = user_activity.album_cover_url
 
+            
             track_info_get = await spotify.analyze_song(user_activity.track_id)
 
 
@@ -51,25 +51,8 @@ class AudioInfomation:
 
 
 
-
             embed = discord.Embed(title="Audio Analysis", description="Here is detailed information about the track  " + track_name)
             embed.set_thumbnail(url=track_cover_art)
-            
-            """
-            embed.add_field(name="Duration (in ms)", value=track_info['duration_ms'], inline=True)
-            embed.add_field(name="Key", value=track_info['key'], inline=True)
-            embed.add_field(name="Mode", value=track_info['mode'], inline=True)
-            embed.add_field(name="Time Signature", value=track_info['time_signature'], inline=True)
-            embed.add_field(name="Danceability", value=track_info['danceability'], inline=True)
-            embed.add_field(name="Energy", value=track_info['energy'], inline=True)
-            embed.add_field(name="Instrumentalness", value=track_info['instrumentalness'], inline=True)
-            embed.add_field(name="Liveness", value=track_info['liveness'], inline=True)
-            embed.add_field(name="Speechiness", value=track_info['speechiness'], inline=True)
-            embed.add_field(name="Loudness", value=track_info['loudness'], inline=True)
-            embed.add_field(name="Valence", value=track_info['valence'], inline=True)
-            embed.add_field(name="BPM", value=round(track_info['tempo']), inline=True)
-            embed.add_field(name="Have no idea what these mean?", value="[Learn more about these values and what they mean](https://www.reddit.com/user/exofeel/comments/ab2aw3/trackrr_what_do_the_values_mean/)")
-            """
 
             # I'm gonna try somethin crazy
 
