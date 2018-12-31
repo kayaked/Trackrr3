@@ -31,7 +31,7 @@ Use Trackrr with a music bot to get the full potential!
 
 **Song search**
 
-Usage: ```^search_track songname```
+Usage: ```^search_track service songname```
 
 For example, let's say I want to search for **Bound 2** by **Kanye West**, this is an easy command. First, you can run ```^search_track``` To list the available sources for track searching. Then, you can simply run:
 
@@ -41,7 +41,7 @@ For example, let's say I want to search for **Bound 2** by **Kanye West**, this 
 
 **Album search**
 
-Usage: ```^search_album albumname```
+Usage: ```^search_album service albumname```
 
 For example, let's say I want to search for **KIDS SEE GHOSTS**. Trackrr makes it easy.
 
@@ -95,14 +95,35 @@ For example, let's say you want to search **Deezer** by default?
 
 ![prefs](https://i.gyazo.com/a430d3fc7bac7b49a61c65cfe4a0714b.png)
 
+**Search from a user's Spotify presence**
+
+Usage: ```^search_playing @user```
+
+Search the song someone is currently playing on all sources.
+
+![searchplay](https://i.gyazo.com/fe860ee997e3c35fd02815b3ab3cad5d.png)
+
+**Favorite Songs!**
+
+Usage: ```^favorites``` ```^favorites #```
+
+To favorite a song, search it on Trackrr, then react to the result message with a ❤️. Trackrr will add the song to your favorites list, which can be viewed using ```^favorites```. This list will number the tracks in order, and by doing ```^favorites #``` with a respective number, you can view a song you have favorited.
+
+![flighttomemphis](https://cdn.discordapp.com/attachments/528057306185990175/529335349080489984/ezgif.com-video-to-gif.gif)
+
 ## What works?
-- Music search
-- Album search
-- Artist search
-- Local track search
-- Top Charts
+* **Music search**
+* **Album search**
+* **Artist search**
+* **Local track search**
+* **Top Charts**
+* **Search what a user is currently listening to**
+* **Analyze the audio of Spotify songs**
+* **Preferences**
+* **Favorites**
 
 Trackrr will soon support:
+* **AudioMack? We still need that API key**
 * **Certain VC stuff (Likely YouTube)**
 
 This bot's DB functions only work on a Unix machine. Windows is currently not supported by Motor.
