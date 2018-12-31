@@ -2,7 +2,56 @@ import discord
 from discord.ext import commands
 import cogs.mods.genius as genius
 from datetime import datetime
+import motor.motor_asyncio
 
+from cogs.mods.keys import Keys
+
+from pyfy import AsyncSpotify, ClientCreds
+
+
+client = motor.motor_asyncio.AsyncIOMotorClient()
+db=client['Trackrr']
+
+async def authorize_spotify():
+    """ Authoirzies Spotify using PyFy's Method """
+    client = ClientCreds(client_id=Keys.SPOTIFYCLIENT, client_secret=Keys.SPOTIFYSECRET)
+    spotify = AsyncSpotify(client_creds=client)
+    await spotify.authorize_client_creds()
+    return spotify
+
+class AudioInfomation:
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command(name='analyze', aliases=['analyse, advanced_info, adv_info'])
+    async def analyze(self, ctx):
+        user_activity = ctx.author.activity 
+        spotify = await authorize_spotify()
+        if isinstance(user_activity, discord.Spotify):
+
+            track_info = await spotify.tracks_audio_features(user_activity.track_id)
+            track_name = user_activity.title
+           
+            track_cover_art = user_activity.album_cover_url
+           
+            embed=discord.Embed(title="Audio Analysis", description="Here is detailed information about the track  " + track_name)
+            embed.set_thumbnail(url=track_cover_art)
+            embed.add_field(name="Duration (in ms)", value=track_info['duration_ms'], inline=True)
+            embed.add_field(name="Key", value=track_info['key'], inline=True)
+            embed.add_field(name="Mode", value=track_info['mode'], inline=True)
+            embed.add_field(name="Time Signature", value=track_info['time_signature'], inline=True)
+            embed.add_field(name="Danceability", value=track_info['danceability'], inline=True)
+            embed.add_field(name="Energy", value=track_info['energy'], inline=True)
+            embed.add_field(name="Instrumentalness", value=track_info['instrumentalness'], inline=True)
+            embed.add_field(name="Liveness", value=track_info['liveness'], inline=True)
+            embed.add_field(name="Speechiness", value=track_info['speechiness'], inline=True)
+            embed.add_field(name="Loudness", value=track_info['loudness'], inline=True)
+            embed.add_field(name="Valence", value=track_info['valence'], inline=True)
+            embed.add_field(name="BPM", value=round(track_info['tempo']), inline=True)
+            embed.add_field(name="Have no idea what these mean?", value="[Learn more about these values and what they mean](https://www.reddit.com/user/exofeel/comments/ab2aw3/trackrr_what_do_the_values_mean/)")
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send('not listening to spotify.')
 
 class Lyrics:
 
@@ -51,13 +100,14 @@ class Lyrics:
             lyrics_split = []
             lyrics_rawsplit = lyrics.split('\n')
             lyrics_segment = []
-            for line in range(0, len(lyrics_rawsplit)):
-                if ('\n'.join(lyrics_segment) + '\n' + lyrics_rawsplit[line]).__len__() <= 2000:
-                    lyrics_segment.append(lyrics_rawsplit[line])
+            for line in lyrics_rawsplit:
+                if ('\n'.join(lyrics_segment) + '\n' + line).__len__() <= 2000:
+                    lyrics_segment.append(line)
                 else:
                     lyrics_split.append('\n'.join(lyrics_segment))
-                    lyrics_segment = [lyrics_rawsplit[line]]
-                if line == len(lyrics_rawsplit)-1:
+                    lyrics_segment = [line]
+                if lyrics_rawsplit.index(line) == len(lyrics_rawsplit)-1:
+                    print("end of stream!")
                     lyrics_split.append('\n'.join(lyrics_segment))
                     break
 
@@ -121,3 +171,4 @@ class Producers:
 def setup(bot):
     bot.add_cog(Lyrics(bot))
     bot.add_cog(Producers(bot))
+    bot.add_cog(AudioInfomation(bot))
