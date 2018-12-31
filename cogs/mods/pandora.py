@@ -4,6 +4,7 @@ from datetime import datetime
 import urllib.parse
 from .keys import Keys
 
+
 class PandoraAPI:
     BASE = 'https://www.pandora.com/api/v1/'
 
@@ -20,20 +21,21 @@ async def search_song(song_name):
     if not results:
         raise NotFound
     
-    results=results[0]
+    results = results[0]
 
     rid = results.get('musicId', '')
 
-    payload = {'token':rid}
+    payload = {'token': rid}
 
     async with aiohttp.ClientSession() as session:
         async with session.post(PandoraAPI.BASE + f'music/track', json=payload, headers=headers) as resp:
             response = await resp.json()
     return PandoraSong(response)
 
+
 class PandoraSong(Song):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0xffffff
         self.service = 'Pandora'
         self.name = data.get('songTitle', 'N/A')

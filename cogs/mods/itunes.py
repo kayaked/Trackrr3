@@ -14,9 +14,10 @@ from .base import Song
 class itunesAPI:
     BASE = 'https://itunes.apple.com'
 
+
 # Constructs a link to request with the default settings
-def construct_link(type, search_term:str):
-    params={}
+def construct_link(type, search_term: str):
+    params = {}
     if type == "album":
         params = {
             "term": search_term,
@@ -42,23 +43,22 @@ async def search_artist(artist):
             resp_json = await resp.json(content_type=None)
 
         artist_info = {
-            'name':'Unknown Artist',
-            'description':'No info.',
-            'date_birth':'Unknown',
-            'latest_release':'N/A',
-            'home_town':'Somewhere, Earth',
-            'image_url':'https://raw.githubusercontent.com/exofeel/Trackrr/master/assets/UnknownArtist.png',
-            'genre':'All'
+            'name': 'Unknown Artist',
+            'description': 'No info.',
+            'date_birth': 'Unknown',
+            'latest_release': 'N/A',
+            'home_town': 'Somewhere, Earth',
+            'image_url': 'https://raw.githubusercontent.com/exofeel/Trackrr/master/assets/UnknownArtist.png',
+            'genre': 'All'
         }
-        
+
         results = resp_json.get('results', [])
 
         if not results:
             raise NotFound
 
-        
         top_result = results[0]
-        
+
         # Get the URL from iTunes with info
         result_url = top_result.get('artistLinkUrl', 'https://itunes.apple.com/')
 
@@ -78,10 +78,10 @@ async def search_artist(artist):
             artist_info['description'] = soup_json.get('description')
             if artist_info['description'].__len__() > 500:
                 artist_info['description'] = artist_info['description'][:500] + f'[...]({result_url})'
-        
+
         # Get Birth date, Genre and Home-town
         # cont == The containers on the page, such as DOB
-        #find_cont = lambda cont: cont.find('dt', {'class':'we-truncate we-truncate--single-line ember-view we-about-artist-inline__details-label'})
+        # find_cont = lambda cont: cont.find('dt', {'class':'we-truncate we-truncate--single-line ember-view we-about-artist-inline__details-label'})
         containers_raw = soup.find_all('div', {'class':'we-about-artist-inline__details-item'})
         born_containers = [cont for cont in containers_raw if 'BORN' in getattr(cont, 'text', '')]
         if born_containers:
@@ -92,18 +92,18 @@ async def search_artist(artist):
         genre_containers = [cont for cont in containers_raw if 'GENRE' in getattr(cont, 'text', '')]
         if genre_containers:
             artist_info['genre'] = getattr(genre_containers[0].find('dd'), 'text', 'Unknown').strip()
-        
+
         # Get Latest Release info. /name
         latest_release_raw = soup.find("span", {"class": "featured-album__text__headline targeted-link__target"})
         latest_release = getattr(latest_release_raw, 'text', 'IDK')
         artist_info['latest_release'] = latest_release
-        
+
         # Get artist picture
-        found_image = soup.find("source", {"class" : "we-artwork__source"})
+        found_image = soup.find("source", {"class": "we-artwork__source"})
         if found_image:
             if found_image.get('srcset'):
                 artist_info['image_url'] = found_image.get('srcset').split(',')[0].split(' ')[0]
-        
+
         embed = discord.Embed(title=artist_info['name'] + ' <:itunes:526554505626779659>', url=result_url, timestamp=datetime.now(), color=discord.Color(0xe98def))
         embed.set_image(url=artist_info['image_url'])
         embed.add_field(name='Latest Release 🎵', value=artist_info['latest_release'])
@@ -113,13 +113,13 @@ async def search_artist(artist):
         embed.add_field(name=f'About {artist_info["name"]} 🗒', value=artist_info['description'])
 
         return embed
-        
+
 
 async def search_album(album_name):
     """ Searches an album by name on iTunes/AppleMusic. """
     async with aiohttp.ClientSession() as session:
         url = construct_link(type="album", search_term=album_name)
-        #async with session.get(itunesAPI.BASE + '/search', params={'term': album_name, 'media': 'music', 'entity': 'album'}) as resp:
+        # async with session.get(itunesAPI.BASE + '/search', params={'term': album_name, 'media': 'music', 'entity': 'album'}) as resp:
         async with session.get(url) as resp:
             resp_json = await resp.text()
             resp_json = json.loads(resp_json.strip())
@@ -132,7 +132,7 @@ async def search_album(album_name):
             tracklist_resp = await resp.text()
             tracklist_resp = json.loads(tracklist_resp.strip())
             tracklist_resp = tracklist_resp.get('results', [])
-        form['track_list'] = tracklist = [i.get('trackName', '') for i in tracklist_resp if i.get('wrapperType', '')=="track"]
+        form['track_list'] = [i.get('trackName', '') for i in tracklist_resp if i.get('wrapperType', '') == "track"]
     return iTunesAlbum(form)
 
 
@@ -147,12 +147,9 @@ async def search_song(song_name):
             else:
                 track_selected = resp_json['results'][0]
 
-    
-
                 async def release_date():
                     datetime_formatted = datetime.strptime(track_selected['releaseDate'], '%Y-%m-%dT%H:%M:%SZ')
                     return datetime_formatted
-    
 
                 form = {
                     "TrackName": track_selected['trackName'],
@@ -166,12 +163,9 @@ async def search_song(song_name):
                 return iTunesSong(form)
 
 
-
-
-
 class iTunesSong(Song):
-    
-    def __init__(self, data:dict):
+
+    def __init__(self, data: dict):
         self.color = 0xe98def
         self.service = 'iTunes'
         self.name = data['TrackName']
@@ -184,7 +178,7 @@ class iTunesSong(Song):
 
 class iTunesAlbum(Album):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0xe98def
         self.service = 'iTunes'
         self.name = data.get('collectionName', '')

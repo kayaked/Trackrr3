@@ -68,9 +68,10 @@ async def search_song(song_name):
 
     return AmazonSong(hit)
 
+
 class AmazonAlbum(Album):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0x157FC3
         self.service = 'Amazon'
         self.name = data.get('title', 'N/A')
@@ -80,9 +81,10 @@ class AmazonAlbum(Album):
         self.cover_url = data.get('artFull', {}).get('URL', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true').replace('500', '1024')
         self.release_date = datetime.fromtimestamp(data.get('originalReleaseDate', 18000))
 
+
 class AmazonSong(Song):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0x157FC3
         self.service = 'Amazon'
         self.name = data.get('title', 'N/A')

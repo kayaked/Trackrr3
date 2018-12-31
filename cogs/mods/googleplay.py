@@ -1,4 +1,5 @@
-import aiohttp, bs4
+import aiohttp
+import bs4
 from .base import *
 from datetime import datetime
 
@@ -18,7 +19,7 @@ async def search_album(album_name):
 
     soup = bs4.BeautifulSoup(resp_text, 'html.parser')
     # Finds the results panel with Albums
-    panels = [panel for panel in soup.find_all('div', {'class':'id-cluster-container cluster-container cards-transition-enabled'}) if 'Albums' in getattr(panel, 'text', '')]
+    panels = [panel for panel in soup.find_all('div', {'class': 'id-cluster-container cluster-container cards-transition-enabled'}) if 'Albums' in getattr(panel, 'text', '')]
     if not panels:
         raise NotFound
     # Gets the first result
@@ -26,15 +27,15 @@ async def search_album(album_name):
     results = list(getattr(panel, 'children', []))
     if not results:
         raise NotFound
-    
+
     results = results[0]
 
     hits = {}
 
-    hits['name'] = results.find('a', {'class':'title'}).text.strip()
-    hits['link'] = PlayAPI.BASE + results.find('a', {'class':'card-click-target'}).get('href', '/store/')
-    hits['artist'] = results.find('a', {'class':'subtitle'}).text.strip()
-    hits['cover_url'] = results.find('img', {'class':'cover-image'}).get('src', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
+    hits['name'] = results.find('a', {'class': 'title'}).text.strip()
+    hits['link'] = PlayAPI.BASE + results.find('a', {'class': 'card-click-target'}).get('href', '/store/')
+    hits['artist'] = results.find('a', {'class': 'subtitle'}).text.strip()
+    hits['cover_url'] = results.find('img', {'class': 'cover-image'}).get('src', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
 
     # I run into this a lot, having to make another request for the fucking track list. Pleas just put it in the first 1 🙏
     async with aiohttp.ClientSession() as session:
@@ -42,18 +43,19 @@ async def search_album(album_name):
             resp_text = await resp.text()
 
     soup = bs4.BeautifulSoup(resp_text, 'html.parser')
-    track_list = soup.find('table', {'class':'track-list'}).find_all('tr', {'class':'track-list-row'})
-    hits['track_list'] = [tracc.find('div', {'class':'title'}).text.strip() for tracc in track_list]
+    track_list = soup.find('table', {'class': 'track-list'}).find_all('tr', {'class': 'track-list-row'})
+    hits['track_list'] = [tracc.find('div', {'class': 'title'}).text.strip() for tracc in track_list]
     try:
-        hits['release_date'] = [info for info in soup.find_all('div', {'class':'meta-info'}) if 'Released' in info.text][0].find('div', {'class':'content'}).text
+        hits['release_date'] = [info for info in soup.find_all('div', {'class': 'meta-info'}) if 'Released' in info.text][0].find('div', {'class': 'content'}).text
     except:
         hits['release_date'] = 'January 1, 1970'
 
     return PlayAlbum(hits)
 
+
 class PlayAlbum(Album):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0xeeeeee
         self.service = 'GooglePlay'
         self.name = data.get('name', 'N/A')

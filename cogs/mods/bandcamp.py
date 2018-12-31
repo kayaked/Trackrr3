@@ -48,9 +48,11 @@ async def search_song(album_name):
         result['TrackAlbum'] = bs4.BeautifulSoup(response, 'html.parser').find('span', itemprop='inAlbum').text.strip()
 
     return BandcampSong(result)
-class BandcampSong(Song): #Soon
-    
-    def __init__(self, data:dict):
+
+
+class BandcampSong(Song):
+
+    def __init__(self, data: dict):
         self.color = 0x408ea3
         self.service = 'Bandcamp'
         self.name = data.get('name', 'N/A')
@@ -63,7 +65,7 @@ class BandcampSong(Song): #Soon
 
 class BandcampAlbum(Album):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0x408ea3
         self.service = 'Bandcamp'
         self.name = data.get('name', 'N/A')

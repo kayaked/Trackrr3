@@ -1,6 +1,6 @@
 from pyfy import AsyncSpotify, ClientCreds
-#from .keys import SPOTIFYSECRET, SPOTIFYCLIENT, SPOTIFYSCOPE, SPOTIFYNAME, SPOTIFYREDIRECTURL
-#from .base import Album
+# from .keys import SPOTIFYSECRET, SPOTIFYCLIENT, SPOTIFYSCOPE, SPOTIFYNAME, SPOTIFYREDIRECTURL
+# from .base import Album
 from .base import *
 from .base import NotFound
 from .keys import Keys
@@ -31,7 +31,7 @@ async def search_song(song_name):
         raise NotFound("No Results found for spotify")
     except Exception:
         raise NotFound("Error!")
-    
+
     async def track_artist():
         try:
             return track_selected['artists'][0]['name']
@@ -49,7 +49,7 @@ async def search_song(song_name):
         except Exception as err:
             print(err)
             return "Unknown!"
-    
+
     async def get_url():
         try:
             return track_selected['external_urls']['spotify']
@@ -67,7 +67,7 @@ async def search_song(song_name):
         except Exception as err:
             print(err)
             return "Unknown!"
-    
+
     async def track_album():
         try:
             return track_selected['album']['name']
@@ -76,7 +76,7 @@ async def search_song(song_name):
         except Exception as err:
             print(err)
             return "Unknown!"
-   
+
     # The date the album was first released, for example “1981-12-15”. 
     # Depending on the precision, it might be shown as “1981” or “1981-12”.
     # The precision with which release_date value is known: “year” , “month” , or “day”.	
@@ -86,8 +86,8 @@ async def search_song(song_name):
         album_release_date_type = album_selected['release_date_precision']
         try:
             if album_release_date_type == "day":
-               parsed_time = datetime.strptime(album_release_date, "%Y-%m-%d").strftime('%B %-d, %Y')
-               return parsed_time
+                parsed_time = datetime.strptime(album_release_date, "%Y-%m-%d").strftime('%B %-d, %Y')
+                return parsed_time
             elif album_release_date_type == "month":
                 parsed_time = datetime.strptime(album_release_date, "%Y-%m").strftime('%B %Y')
                 return parsed_time
@@ -133,7 +133,7 @@ async def search_album(album_name):
             raise NotFound
         except Exception as error:
             return error
-    
+
     async def get_cover_art():
         try:
             return album_selected['images'][0]['url']
@@ -141,7 +141,7 @@ async def search_album(album_name):
             raise NotFound
         except Exception as error:
             return error
-    
+
     async def album_artist():
         try:
             return album_selected['artists'][0]['name']
@@ -158,7 +158,6 @@ async def search_album(album_name):
             tracks.append(track['name'])
         return tracks
 
-
     # The date the album was first released, for example “1981-12-15”. 
     # Depending on the precision, it might be shown as “1981” or “1981-12”.
     # The precision with which release_date value is known: “year” , “month” , or “day”.	
@@ -167,8 +166,8 @@ async def search_album(album_name):
         album_release_date_type = album_selected['release_date_precision']
         try:
             if album_release_date_type == "day":
-               parsed_time = datetime.strptime(album_release_date, "%Y-%m-%d").strftime('%B %-d, %Y')
-               return parsed_time
+                parsed_time = datetime.strptime(album_release_date, "%Y-%m-%d").strftime('%B %-d, %Y')
+                return parsed_time
             elif album_release_date_type == "month":
                 parsed_time = datetime.strptime(album_release_date, "%Y-%m").strftime('%B %Y')
                 return parsed_time
@@ -177,14 +176,20 @@ async def search_album(album_name):
         except Exception:
             return "Unknown!"
 
-    
-    info = {"AlbumArtist": await album_artist(), "AlbumName": await get_album_name(), "AlbumCoverArt": await get_cover_art(), "URL": await get_url(), "TrackList": await track_list(), "ReleaseDate": await get_release_date()}
+    info = {
+        "AlbumArtist": await album_artist(),
+        "AlbumName": await get_album_name(),
+        "AlbumCoverArt": await get_cover_art(),
+        "URL": await get_url(),
+        "TrackList": await track_list(),
+        "ReleaseDate": await get_release_date()
+    }
     return SpotifyAlbum(info)
 
 
 class SpotifyAlbum(Album):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0x84bd00
         self.service = 'Spotify'
         self.name = data['AlbumName']
@@ -194,9 +199,10 @@ class SpotifyAlbum(Album):
         self.cover_url = data['AlbumCoverArt']
         self.release_date = data['ReleaseDate']
 
+
 class SpotifySong(Song):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0x84bd00
         self.service = 'Spotify'
         self.name = data['TrackName']

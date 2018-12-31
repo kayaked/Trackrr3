@@ -4,21 +4,22 @@ from datetime import datetime
 import urllib.parse
 from .keys import Keys
 
+
 class lfmAPI:
     BASE = 'http://ws.audioscrobbler.com/2.0/'
     KEY = Keys.LASTFM
 
 async def _fetch(method, **kw):
     """ Taken from Yak(oganessium)'s un-finished Last.FM module """
-    params = {**kw, 'method':method, 'format':'json', 'api_key':lfmAPI.KEY}
+    params = {**kw, 'method': method, 'format': 'json', 'api_key': lfmAPI.KEY}
     async with aiohttp.ClientSession() as session:
         async with session.get(lfmAPI.BASE + "?" + urllib.parse.urlencode(params).replace('+', '%20')) as apir:
             response = await apir.json()
-    
+
     if 'error' in response:
         if response['error'] == 10:
             raise NotFound("Your last.fm API key is not valid.")
-        raise ClientError(f"Unknown error code {response['error']}")
+        raise NotFound(f"Unknown error code {response['error']}")
 
     return response
 
@@ -29,13 +30,13 @@ async def search_album(album_name):
         if response['error'] == 10:
             raise NotFound("Your last.fm API key is not valid.") # https://www.last.fm/api/account/create
         raise NotFound(f"Unknown error code {response['error']}")
-    
+
     results = response.get('results', {}).get('albummatches', {}).get('album', [])
 
     if not results:
         raise NotFound
-    
-    results=results[0] # Gets first result
+
+    results = results[0]  # Gets first result
 
     # Fetches track list from the extra album info End-point.
     response = await _fetch('album.getinfo', album=results.get('name', ''), artist=results.get('artist', 'N/A'))
@@ -43,25 +44,25 @@ async def search_album(album_name):
     if not response:
         results['track_list'] = []
     else:
-        results['track_list'] = [ tr.get('name', '') for tr in response ]
+        results['track_list'] = [tr.get('name', '') for tr in response]
 
     return LFMAlbum(results)
 
 async def search_song(song_name):
     """ Searches a song by name on Last.FM. """
     response = await _fetch('track.search', track=song_name)
-    
+
     if 'error' in response:
         if response['error'] == 10:
-            raise InvalidKey("Your last.fm API key is not valid.") # https://www.last.fm/api/account/create
+            raise NotFound("Your last.fm API key is not valid.")  # https://www.last.fm/api/account/create
         raise NotFound(f"Unknown error code {response['error']}")
-    
+
     results = response.get('results', {}).get('trackmatches', {}).get('track', [])
 
     if not results:
         raise NotFound
-    
-    results=results[0] # Gets first result
+
+    results = results[0]  # Gets first result
 
     # Fetches album/cover from the extra song info End-point.
     response = await _fetch('track.getinfo', track=results.get('name', ''), artist=results.get('artist', 'N/A'))
@@ -74,9 +75,10 @@ async def search_song(song_name):
 
     return LFMSong(results)
 
+
 class LFMAlbum(Album):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0x7c0000
         self.service = 'LastFM'
         self.name = data.get('name', '')
@@ -86,9 +88,10 @@ class LFMAlbum(Album):
         self.cover_url = data.get('image', [])[-1].get('#text', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
         self.release_date = 'Unknown'
 
+
 class LFMSong(Song):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0x7c0000
         self.service = 'LastFM'
         self.name = data.get('name', '')

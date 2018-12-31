@@ -4,6 +4,7 @@ from datetime import datetime
 import bs4
 import discord
 
+
 class GeniusAPI:
     BASE = 'https://genius.com/api'
     # Ok so basically api.genius.com requires a key but this one does not??? IDK genius fix ur shit
@@ -62,7 +63,6 @@ async def search_song(song_name):
 
         hits = resp2_json.get('response', {}).get('song', {})
 
-
         return GeniusSong(hits)
 
 async def get_song_lyrics(song_name):
@@ -90,7 +90,7 @@ async def get_song_lyrics(song_name):
 
 class GeniusAlbum(Album):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0xffff00
         self.service = 'Genius'
         self.name = data.get('name', '')
@@ -100,9 +100,10 @@ class GeniusAlbum(Album):
         self.cover_url = data.get('cover_art_url', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
         self.release_date = datetime.strptime(data.get('release_date'), '%Y-%m-%d') if data.get('release_date') else 'Unknown'
 
+
 class GeniusSong(Song):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0xffff00
         self.service = 'Genius'
         self.name = data.get('title', 'N/A')

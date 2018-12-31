@@ -4,6 +4,7 @@ from datetime import datetime
 import urllib.parse
 from .keys import Keys
 
+
 class MusicBrainzAPI:
     BASE = 'https://musicbrainz.org/ws/2/'
     COVERBASE = 'http://coverartarchive.org/release/'
@@ -17,18 +18,17 @@ async def search_album(album_name):
     async with aiohttp.ClientSession() as session:
         async with session.get(MusicBrainzAPI.BASE + 'release-group', params=params) as resp:
             response = await resp.json()
-    
+
     if 'error' in response:
         raise NotFound(response['error'])
-    
+
     results = response.get('release-groups', [])
     results = [result for result in results if result.get('primary-type', '') == 'Album']
 
     if not results:
         raise NotFound('no result')
-    
-    
-    results=results[0]
+
+    results = results[0]
 
     params.pop('query')
     params['inc'] = 'artist-credits+labels+discids+recordings'
@@ -55,22 +55,22 @@ async def search_album(album_name):
         if image_resp:
             image = image_resp.get('images', [])
             if image:
-                results['cover']=image[0].get('image', '')
+                results['cover'] = image[0].get('image', '')
                 async with aiohttp.ClientSession() as session:
                     async with session.get(results['cover'], allow_redirects=False) as resp:
                         download_url = resp.headers['location']
                     async with session.get(download_url, allow_redirects=False) as resp:
                         results['cover'] = resp.headers['location']
-        
+
         if 'error' in response:
             raise NotFound(response['error'])
-        
+
         media = response.get('media', [])
         if not media:
             raise NotFound('no media;')
         trackraw = media[0].get('tracks', [])
-        results['track_list'] = [ tr.get('title', '') for tr in trackraw ]
-    
+        results['track_list'] = [tr.get('title', '') for tr in trackraw]
+
     # Gets release date
     release_date = response.get('date', '1970')
     if release_date.count('-') == 2:
@@ -84,9 +84,10 @@ async def search_album(album_name):
 
     return MBAlbum(results)
 
+
 class MBAlbum(Album):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0x963873
         self.service = 'MusicBrainz'
         self.name = data.get('title', 'N/A')

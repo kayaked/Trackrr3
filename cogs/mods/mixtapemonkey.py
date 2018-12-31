@@ -7,6 +7,7 @@ import re
 
 # MM Does not actually support track search RIP
 
+
 class MonkeyAPI:
     BASE = 'https://mixtapemonkey.com'
 
@@ -21,7 +22,7 @@ async def search_album(album_name):
 
     if not response:
         raise NotFound
-    
+
     soup = bs4.BeautifulSoup(response, 'html.parser')
 
     result = [a for a in soup.find_all('a') if '/artist/' not in a['href']]
@@ -29,7 +30,7 @@ async def search_album(album_name):
     if not result:
         raise NotFound
 
-    result=result[0]
+    result = result[0]
 
     hits = {}
 
@@ -42,13 +43,14 @@ async def search_album(album_name):
         async with session.get(MonkeyAPI.BASE + result['href']) as resp:
             response = await resp.text()
     soup = bs4.BeautifulSoup(response, 'html.parser')
-    hits['track_list'] = [li['data-title'].strip() for li in soup.find('div', {'class':'player'}).find('ul').find_all('li')] # data-url attrs are DL links
+    hits['track_list'] = [li['data-title'].strip() for li in soup.find('div', {'class':'player'}).find('ul').find_all('li')]  # data-url attrs are DL links
     hits['release_date'] = getattr(soup.find('p', text=re.compile('Released')), 'text', 'Released in 1970').strip().split(' ')[-1]
     return MonkeyAlbum(hits)
 
+
 class MonkeyAlbum(Album):
 
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.color = 0xF24C1A
         self.service = 'MixtapeMonkey'
         self.name = data.get('title', 'N/A')

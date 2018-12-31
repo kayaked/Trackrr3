@@ -14,12 +14,14 @@ class napsterAPI:
     TRACK_BASE = "https://api.napster.com/v2.2/tracks/"
     ALBUM_LOOKUP_BASE = "https://api.napster.com/v2.2/albums/"
 
+
 class NotFound(Exception):
     pass
 
+
 # Constructs a params to request with the default settings
 # Keeps it clean
-def construct_param(type, search_term:str):
+def construct_param(type, search_term: str):
     if type == "track":
         params = {
             "catalog": "US",
@@ -42,17 +44,15 @@ def construct_param(type, search_term:str):
             "type": "album"
         }
         return params
+
+
 # Idk if this is needed, but just in case
 # To Do: Random Generate User Agent
 def construct_header():
     headers = {
-    'apikey': Keys.DEV_NAPSTERAPI,
+        'apikey': Keys.DEV_NAPSTERAPI
     }
     return headers
-
-
-
-
 
 
 # http://direct.napster.com/imageserver/v2/albums/{album_id}/images/{size}.{extension}
@@ -77,11 +77,9 @@ async def return_album_info(session, album_id):
         except KeyError:
             raise NotFound
 
-
         tracks = []
         for track in track_list:
             tracks.append(track['name'])
-
 
         album_release_date_raw = dateutil.parser.parse(album_selected['released'])
 
@@ -129,7 +127,7 @@ async def search_song(song_name):
                 raise KeyError("Napster 116-120")
 
             album_lookup = await return_album_info(session=session, album_id=album_id)
-            if album_lookup == None:
+            if album_lookup is None:
                 raise NotFound
 
             else:
@@ -145,9 +143,10 @@ async def search_song(song_name):
 
             return NapsterSong(form)
 
+
 class NapsterSong(Song):
-    
-    def __init__(self, data:dict):
+
+    def __init__(self, data: dict):
         self.color = 0x586474
         self.service = 'Napster'
         self.name = data['TrackName']
@@ -157,9 +156,10 @@ class NapsterSong(Song):
         self.track_album = data['TrackAlbum']
         self.release_date = data['TrackReleaseDate']
 
+
 class NapsterAlbum(Album):
-    
-    def __init__(self, data:dict):
+
+    def __init__(self, data: dict):
         self.color = 0x586474
         self.service = 'Napster'
         self.name = data['AlbumName']
