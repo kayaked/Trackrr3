@@ -10,31 +10,34 @@ from pyfy import AsyncSpotify, ClientCreds
 
 
 client = motor.motor_asyncio.AsyncIOMotorClient()
-db=client['Trackrr']
+db = client['Trackrr']
 
 async def authorize_spotify():
     """ Authoirzies Spotify using PyFy's Method """
-    client = ClientCreds(client_id=Keys.SPOTIFYCLIENT, client_secret=Keys.SPOTIFYSECRET)
+    client = ClientCreds(
+        client_id=Keys.SPOTIFYCLIENT,
+        client_secret=Keys.SPOTIFYSECRET
+    )
     spotify = AsyncSpotify(client_creds=client)
     await spotify.authorize_client_creds()
     return spotify
+
 
 class AudioInfomation:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='analyze', aliases=['analyse, advanced_info, adv_info'])
+    @commands.command(name='analyze', aliases=['analyse', 'advanced_info', 'adv_info'])
     async def analyze(self, ctx):
-        user_activity = ctx.author.activity 
+        user_activity = ctx.author.activity
         spotify = await authorize_spotify()
         if isinstance(user_activity, discord.Spotify):
 
             track_info = await spotify.tracks_audio_features(user_activity.track_id)
             track_name = user_activity.title
-           
             track_cover_art = user_activity.album_cover_url
-           
-            embed=discord.Embed(title="Audio Analysis", description="Here is detailed information about the track  " + track_name)
+
+            embed = discord.Embed(title="Audio Analysis", description="Here is detailed information about the track  " + track_name)
             embed.set_thumbnail(url=track_cover_art)
             embed.add_field(name="Duration (in ms)", value=track_info['duration_ms'], inline=True)
             embed.add_field(name="Key", value=track_info['key'], inline=True)
@@ -53,16 +56,15 @@ class AudioInfomation:
         else:
             await ctx.send('not listening to spotify.')
 
+
 class Lyrics:
 
     def __init__(self, bot):
         self.bot = bot
 
-
-
     @commands.command(name='yandhi')
     async def yandhi(self, ctx):
-        
+
         # release YANDHI kanye
         before_date = datetime(2018, 9, 28, 0, 0)
         after_date = datetime.now()
@@ -112,7 +114,7 @@ class Lyrics:
                     break
 
             lyrics_split = [seg[:2000].strip() for seg in lyrics_split]
-            
+
             if lyrics_split.__len__() > 3:
                 lyrics_split = lyrics_split[:3]
                 lyrics_split[-1] += f'[...]({hit.get("url", "")})'
@@ -122,6 +124,7 @@ class Lyrics:
                 embed.set_thumbnail(url=hit.get('header_image_url', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true'))
                 embed.set_footer(text=f"Trackrr Music Search | Data pulled from Genius", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
                 await ctx.send(embed=embed)
+
 
 class Producers:
 
@@ -140,7 +143,7 @@ class Producers:
             # It would be nice if I could do it all with one simple double line break split, but to improve accuracy I am not going to.
             # Report any bugs to Yak#7474 ASAP. ty for using trackrr!
             for b in lyrics.find_all('b'):
-                producer = {'name':b.text, 'tags':[]}
+                producer = {'name': b.text, 'tags': []}
                 # print('----')
                 for tag in b.next_siblings:
                     # print('[' + getattr(tag, 'text', '').strip() + ']', prev_elem)
@@ -158,7 +161,7 @@ class Producers:
                 if producer.get('tags'):
                     producers.append(producer)
 
-            final_producer = {'name':'Unknown', 'tags':['N/A']}
+            final_producer = {'name': 'Unknown', 'tags': ['N/A']}
             for producer in producers:
                 if producer_name.lower() in producer.get('name', '').lower():
                     final_producer = producer

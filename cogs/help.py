@@ -40,7 +40,12 @@ class Help:
             embed.add_field(name=f'`{cmdprefix}charts/{cmdprefix}trending/{cmdprefix}viral` `<optional "albums">`', value=f'Gets either charts from Billboard, the trending 50 on genius, or Spotify\'s viral 50. Album charts can also be viewed on Genius and Billboard.')
             embed.add_field(name=f'`{cmdprefix}producer_tag` `<*producer name>`', value=f'Finds a producer\'s tag.')
             embed.add_field(name=f'`{cmdprefix}search_playing` `<Member> <service>`', value=f'Gets the song that a user is currently playing and search it, just like `{cmdprefix}search_song` does.')
-            embed.add_field(name=f'`{cmdprefix}help`', value=f'Shows this menu.')
+            embed.add_field(name=f'`{cmdprefix}help`', value=f'Shows this menu.\n\nDo `{cmdprefix}help 3` to view the next page of commands.')
+        elif page=='3':
+            embed.add_field(name=f'`Favoriting tracks`', value='To favorite a track, search it and then react to the result message with a ❤️. Trackrr will then save the song to your favorites! (Does not work on albums)')
+            embed.add_field(name=f'`{cmdprefix}favorites`', value=f'Lists your favorite songs. You can also provide a number (`{cmdprefix}favorites <#>`) to view a track you have favorited.')
+            embed.add_field(name=f'`{cmdprefix}remove_favorite` `<#>`', value='Removes a favorite song by its number on your favorites list.')
+            embed.add_field(name=f'`{cmdprefix}analyze`', value='Gets sound and tune info about the current track your are listening to. (Spotify presence)')
         embed.set_footer(text="Trackrr Music Search | Created by exofeel#3333 X Yak#7474", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
         await ctx.send(embed=embed)
 
