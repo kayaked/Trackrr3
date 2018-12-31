@@ -190,7 +190,7 @@ class SearchSong:
         embed.set_thumbnail(url=album.cover_url)
 
         return embed
-    
+
     @commands.command(name='upload_song', aliases=['upload_track'])
     async def upload_track(self, ctx, service=None):
         if not ctx.message.attachments:
@@ -199,14 +199,14 @@ class SearchSong:
             embed.set_image(url='https://cdn.discordapp.com/attachments/528057306185990175/529039264122404865/4f60da11f38df6119dea86b0fe2883a8.png')
             embed.set_footer(text=f"Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
             return await ctx.send(embed=embed)
-        
+
         async with aiohttp.ClientSession() as session:
             async with session.get(ctx.message.attachments[0].url) as resp:
                 raw = await resp.read()
 
         raw = io.BytesIO(raw)
 
-        raw=id3.ID3(raw)
+        raw = id3.ID3(raw)
 
         file_name = ', '.join(raw.get('TIT2').text)
 
@@ -239,7 +239,6 @@ class SearchSong:
         else:
             cmd = self.bot.get_command('search_song')
             await ctx.invoke(cmd, song_name="{} {}".format(service, file_name))
-        
 
 def setup(bot):
     bot.add_cog(SearchSong(bot))
