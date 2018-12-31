@@ -24,7 +24,8 @@ import traceback
 import random
 
 client = motor.motor_asyncio.AsyncIOMotorClient()
-db=client['Trackrr']
+db = client['Trackrr']
+
 
 class SearchAlbum:
 
@@ -70,14 +71,14 @@ class SearchAlbum:
                     embed = discord.Embed(title='Trackrr', description=f'No results found for `{current_service}`!')
                 return embed
             async with ctx.channel.typing():
-                m=await ctx.send(embed=await get_embed())
+                m = await ctx.send(embed=await get_embed())
             emojis = []
             for service in self.services:
                 if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
                     emojis.append([emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0])
             for eji in emojis:
                 await m.add_reaction(eji)
-            paging=True
+            paging = True
             while paging:
                 try:
                     reaction, user = await self.bot.wait_for('reaction_add', check=lambda r, u: r.emoji in emojis and not u.bot, timeout=25)
@@ -89,16 +90,16 @@ class SearchAlbum:
                     await m.edit(embed=discord.Embed(title='Trackrr', description=f'🔍 Loading `{current_service}`...'))
                     await m.edit(embed=await get_embed())
                 except:
-                    paging=False
+                    paging = False
                     for eji in emojis:
                         await m.remove_reaction(eji, ctx.guild.me)
                     return
         #####
 
         # Checks for a preferred service
-        if svc and svc not in self.services and await db.preferredsvc.find_one({'uid':ctx.author.id}):
-            svc = await db.preferredsvc.find_one({'uid':ctx.author.id})
-            svc=svc.get('service', '')
+        if svc and svc not in self.services and await db.preferredsvc.find_one({'uid': ctx.author.id}):
+            svc = await db.preferredsvc.find_one({'uid': ctx.author.id})
+            svc = svc.get('service', '')
             album_name = svc + ' ' + album_name
 
         # Checks if the category is invalid, and provides a list of sources.
@@ -141,6 +142,7 @@ class SearchAlbum:
         embed.set_thumbnail(url=album.cover_url)
 
         return embed
+
 
 def setup(bot):
     bot.add_cog(SearchAlbum(bot))
