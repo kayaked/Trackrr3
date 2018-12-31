@@ -17,9 +17,28 @@ async def authorize_spotify():
     """ Authoirzies Spotify using PyFy's Method """
     client = ClientCreds(client_id=Keys.SPOTIFYCLIENT, client_secret=Keys.SPOTIFYSECRET)
     spotify = AsyncSpotify(client_creds=client)
+    
+    # Authorize Spotify
     await spotify.authorize_client_creds()
     return spotify
 
+
+async def analyze_song(track_id):
+    spotify = await authorize_spotify()
+
+    # Get Track Advanced Info from Spotify API
+
+    track_information = {}
+
+    track_query = await spotify.tracks_audio_features(track_id)
+
+    if track_query == None:
+        return NotFound
+    else:
+        for key, value in track_query.items():
+            track_information[key] = value
+
+    return track_information
 
 async def search_song(song_name):
     """ Searches a track by name on the official Spotify API using PyFy."""
