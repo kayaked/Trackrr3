@@ -81,7 +81,7 @@ class SearchAlbum:
             paging = True
             while paging:
                 try:
-                    reaction, user = await self.bot.wait_for('reaction_add', check=lambda r, u: r.emoji in emojis and not u.bot, timeout=25)
+                    reaction, user = await self.bot.wait_for('reaction_add', check=lambda r, u: r.message.id == m.id and u.id == ctx.author.id and r.emoji in emojis and not u.bot, timeout=25)
                     try:
                         await m.remove_reaction(reaction, user)
                     except:

@@ -107,7 +107,7 @@ class FavoriteSongs:
                 await msg.add_reaction(reaction)
             while paging:
                 try:
-                    r, user = await self.bot.wait_for('reaction_add', check=lambda r, u: str(r.emoji) in reactions and not u.bot, timeout=25)
+                    r, user = await self.bot.wait_for('reaction_add', check=lambda r, u: msg.id == r.message.id and u.id == ctx.author.id and str(r.emoji) in reactions and not u.bot, timeout=25)
                     user
                     if str(r.emoji) == '⬅':
                         if page == 0:
