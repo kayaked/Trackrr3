@@ -30,6 +30,8 @@ class FavoriteSongs:
         self.bot = bot
 
     def is_favorite_reaction(self, reaction):
+        if reaction.message.author.id != self.bot.user.id:
+            return False
         if str(reaction.emoji) != '❤':
             return False
         msg = reaction.message
