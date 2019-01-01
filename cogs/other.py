@@ -26,7 +26,7 @@ class AudioInfomation:
             track_name = user_activity.title
             track_cover_art = user_activity.album_cover_url
 
-            
+
             track_info_get = await spotify.analyze_song(user_activity.track_id)
 
 
@@ -65,17 +65,43 @@ class AudioInfomation:
                     'type',
                 ]
 
+                value_aliases = {
+
+                    "duration_ms": "Duration (in ms)",
+                    "key": "Key",
+                    "mode": "Mode",
+                    "time_signature": "Time Signature",
+                    "danceability": "Danceability",
+                    "energy": "Energy",
+                    "instrumentalness": "Instrumentalness",
+                    "liveness": "Liveness",
+                    "speechiness": "Speechiness",
+                    "loudness": "Loudness",
+                    "valence": "Valence",
+                    "tempo": "BPM"
+
+                }
+
                 if key in values_ignore:
                     pass
 
                 else:
-                    embed.add_field(name=key, value=value, inline=True)
+                    key_formatted = value_aliases.get(key, key)
+
+                    # Round BPM
+
+                    bpm = lambda tempo: round(tempo)
+
+                    if key_formatted == "BPM":
+                        value = bpm(value)
+                    else:
+                        pass
+                    embed.add_field(name=value_aliases.get(key, key), value=value, inline=True)
 
             embed.add_field(name="Have no idea what these mean?", value="[Learn more about these values and what they mean](https://www.reddit.com/user/exofeel/comments/ab2aw3/trackrr_what_do_the_values_mean/)")
             await ctx.send(embed=embed)
         else:
             await ctx.send('not listening to spotify.')
-
 
 class Lyrics:
 
