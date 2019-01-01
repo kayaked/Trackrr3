@@ -1,7 +1,7 @@
 import aiohttp
 import copy
 import datetime
-import trackback
+import traceback
 import random
 
 
@@ -18,7 +18,7 @@ import cogs.mods.tidal as tidal
 import cogs.mods.spinrilla as spinrilla
 import cogs.mods.musicbrainz as musicbrainz
 import cogs.mods.deezer as deezer
-import cogs.mods.youtube as youtube
+#import cogs.mods.youtube as youtube
 import cogs.mods.mixtapemonkey as mixtapemonkey
 import cogs.mods.googleplay as googleplay
 import cogs.mods.spotify as spotify
