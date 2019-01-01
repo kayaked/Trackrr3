@@ -27,6 +27,8 @@ class Help:
         self.bot = bot
 
     @commands.command(name='help', aliases=['support', 'info', 'botinfo'])
+    @commands.cooldown(10, 10, commands.BucketType.guild)
+    @commands.cooldown(3, 10, commands.BucketType.user)
     async def _help(self, ctx, page='1'):
         cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
         embed = discord.Embed(title='Trackrr 3', description='A Discord bot that searches music information anywhere, anytime.', timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))

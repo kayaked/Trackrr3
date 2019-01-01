@@ -16,7 +16,7 @@ class AudioInfomation:
 
     @commands.command(name='analyze', aliases=['analyse', 'advanced_info', 'adv_info'])
     async def analyze(self, ctx):
-        
+
         # Discord User Information
         user_activity = ctx.author.activity
 
@@ -26,9 +26,7 @@ class AudioInfomation:
             track_name = user_activity.title
             track_cover_art = user_activity.album_cover_url
 
-
             track_info_get = await spotify.analyze_song(user_activity.track_id)
-
 
             # Create Local Dict for embed
             track_info = {}
@@ -42,7 +40,7 @@ class AudioInfomation:
                 ]
 
                 if key in embed_values:
-                    
+
                     # Add to Dict
                     track_info[key] = value
 
@@ -57,7 +55,7 @@ class AudioInfomation:
             # I'm gonna try somethin crazy
 
             for key, value in track_info.items():
-            
+
                 values_ignore = [
                     'analysis_url', 
                     'track_href', 
@@ -90,7 +88,8 @@ class AudioInfomation:
 
                     # Round BPM
 
-                    bpm = lambda tempo: round(tempo)
+                    def bpm(tempo):
+                        return round(tempo)
 
                     if key_formatted == "BPM":
                         value = bpm(value)
@@ -102,6 +101,7 @@ class AudioInfomation:
             await ctx.send(embed=embed)
         else:
             await ctx.send('not listening to spotify.')
+
 
 class Lyrics:
 
@@ -141,6 +141,8 @@ class Lyrics:
         await ctx.send(embed=embed)
 
     @commands.command(name='lyrics')
+    @commands.cooldown(3, 5, commands.BucketType.guild)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def lyrics(self, ctx, *, song_name):
         async with ctx.channel.typing():
             lyrics, hit = await genius.get_song_lyrics(song_name)
@@ -178,6 +180,8 @@ class Producers:
         self.bot = bot
 
     @commands.command(name='producer_tag', aliases=['prod_by', 'prodby', 'producertag', 'producer', 'producers', 'producer_tags', 'producertags', 'prod', 'prods'])
+    @commands.cooldown(10, 5, commands.BucketType.guild)
+    @commands.cooldown(1, 2, commands.BucketType.user)
     async def producer_tag(self, ctx, *, producer_name):
         async with ctx.channel.typing():
             lyrics, hit = await genius.get_song_lyrics('Rap Genius Producer Tags')
