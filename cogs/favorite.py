@@ -8,8 +8,9 @@ import math
 import datetime
 import cogs.mods.base as base
 
+
 class GeneralSong(base.Song):
-    def __init__(self, data:dict):
+    def __init__(self, data: dict):
         self.name = data['name']
         self.artist = data['artist']
         self.release_date = data['release_date']
@@ -22,12 +23,15 @@ class GeneralSong(base.Song):
 client = motor.motor_asyncio.AsyncIOMotorClient()
 db = client['Trackrr']
 
+
 class FavoriteSongs:
 
     def __init__(self, bot):
-        self.bot=bot
+        self.bot = bot
 
     def is_favorite_reaction(self, reaction):
+        if reaction.message.author.id != self.bot.user.id:
+            return False
         if str(reaction.emoji) != '❤':
             return False
         msg = reaction.message
@@ -47,7 +51,6 @@ class FavoriteSongs:
             return False
         return True
 
-    
     async def on_reaction_add(self, reaction, user):
         if not self.is_favorite_reaction(reaction):
             return
@@ -74,7 +77,7 @@ class FavoriteSongs:
         if not await db.favorites.find_one(structure):
             await db.favorites.insert_one(structure)
         await reaction.message.channel.send(f'{user.mention} **{name} by {artist}** was added to your favorites!', delete_after=2)
-    
+
     @commands.command(name='remove_favorite')
     async def remove_favorite(self, ctx, index):
         favorite = await db.favorites.find({'uid': ctx.author.id}).to_list(length=None)
@@ -106,7 +109,8 @@ class FavoriteSongs:
                 await msg.add_reaction(reaction)
             while paging:
                 try:
-                    r, user = await self.bot.wait_for('reaction_add', check=lambda r, u: str(r.emoji) in reactions and not u.bot, timeout=25)
+                    r, user = await self.bot.wait_for('reaction_add', check=lambda r, u: msg.id == r.message.id and u.id == ctx.author.id and str(r.emoji) in reactions and not u.bot, timeout=25)
+                    user
                     if str(r.emoji) == '⬅':
                         if page == 0:
                             page = math.ceil(len(albums)/5)-1
@@ -120,7 +124,7 @@ class FavoriteSongs:
                     embed = self.favorites_embed_format(copy.deepcopy(embedf), albums, page)
                     await msg.edit(embed=embed)
                 except:
-                    paging=False
+                    paging = False
                     for reaction in reactions:
                         await msg.remove_reaction(reaction, ctx.guild.me)
         else:
@@ -135,8 +139,7 @@ class FavoriteSongs:
                 return await ctx.send(embed=embed)
             embed = self.bot.get_cog('SearchSong').song_format(song)
             await ctx.send(embed=embed)
-            
-    
+
     def favorites_embed_format(self, embed, favorites, page):
         for i in favorites[page*5:(page*5)+5]:
             service = i.service
@@ -148,7 +151,7 @@ class FavoriteSongs:
             embed.description += '\n\n(no favorites yet)'
         embed.set_footer(text="Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
         return embed
-            
+
 
 def setup(bot):
     bot.add_cog(FavoriteSongs(bot))

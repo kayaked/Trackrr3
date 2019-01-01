@@ -26,14 +26,9 @@ from mutagen import id3
 import copy
 import json
 
-
 client = motor.motor_asyncio.AsyncIOMotorClient()
-db=client['Trackrr']
-
-
+db = client['Trackrr']
 dev_picks = json.load(open('dev_notes.json', 'r', encoding='utf-8'))
-
-
 
 
 class SearchSong:
@@ -56,10 +51,9 @@ class SearchSong:
             'youtube'
         ]
 
-
     # Basic support for search_playing
     @commands.command(name='search_playing', invoke_without_command=True)
-    async def search_playing(self, ctx, member:discord.Member, service="spotify"):
+    async def search_playing(self, ctx, member: discord.Member, service=''):
         # Section for how args are formatted.
         if isinstance(member, str) and not service:
             service = member
@@ -67,7 +61,7 @@ class SearchSong:
         if not member:
             member = ctx.author
 
-        if service.lower() in self.services:
+        if service.lower() in self.services or not service:
             user_activity = member.activity
             if isinstance(user_activity, discord.Spotify):
 
@@ -81,16 +75,15 @@ class SearchSong:
                 song_name = "{} {}".format(form['SongName'], form['SongArtist'])
                 await ctx.send("🎧 Here's what {} is currently listening to!".format(member.mention))
 
-
                 cmd = self.bot.get_command('search_song')
-                await ctx.invoke(cmd, song_name="all {}".format(song_name))
-
+                service_f = service + ' ' if service else ''
+                await ctx.invoke(cmd, song_name="{}{}".format(service_f, song_name))
 
             else:
                 await ctx.send('not spotify acitvity')
-            
+
         else:
-            await ctx.send('service not specified or not a valid service.')
+            await ctx.send('Service invalid!')
 
     @commands.group(name='search_song', invoke_without_command=True, aliases=['search', 'search_track', 'song', 'track', 'tracksearch', 'searchtrack', 'searchsong', 'songsearch', 'song_search', 'track_search'])
     async def search_song(self, ctx, *, song_name=None):
@@ -114,17 +107,17 @@ class SearchSong:
                     embed = discord.Embed(title='Trackrr', description=f'No results found for `{current_service}`!')
                 return embed
             async with ctx.channel.typing():
-                m=await ctx.send(embed=await get_embed())
+                m = await ctx.send(embed=await get_embed())
             emojis = []
             for service in self.services:
                 if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
                     emojis.append([emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0])
             for eji in emojis:
                 await m.add_reaction(eji)
-            paging=True
+            paging = True
             while paging:
                 try:
-                    reaction, user = await self.bot.wait_for('reaction_add', check=lambda r, u: r.emoji in emojis and not u.bot, timeout=10)
+                    reaction, user = await self.bot.wait_for('reaction_add', check=lambda r, u: r.message.id == m.id and u.id == ctx.author.id and r.emoji in emojis and not u.bot, timeout=10)
                     try:
                         await m.remove_reaction(reaction, user)
                     except:
@@ -133,7 +126,7 @@ class SearchSong:
                     await m.edit(embed=discord.Embed(title='Trackrr', description=f'🔍 Loading `{current_service}`...'))
                     await m.edit(embed=await get_embed())
                 except:
-                    paging=False
+                    paging = False
                     for eji in emojis:
                         await m.remove_reaction(eji, ctx.guild.me)
                     return
@@ -141,9 +134,9 @@ class SearchSong:
         # Checks for a preferred service
         if svc and svc not in self.services and await db.preferredsvc.find_one({'uid':ctx.author.id}) and svc != 'list':
             svc = await db.preferredsvc.find_one({'uid':ctx.author.id})
-            svc=svc.get('service', '')
+            svc = svc.get('service', '')
             song_name = svc + ' ' + song_name
-        
+
         #####
         if not song_name or svc not in self.services or svc == 'list':
             services = copy.deepcopy(self.services)
@@ -177,7 +170,6 @@ class SearchSong:
         embed.add_field(name='Name', value=album.name, inline=False)
         embed.add_field(name='Artist(s)', value=album.artist, inline=False)
         embed.add_field(name='Released', value=album.release_date, inline=False)
-        
 
         try:
             dev_info = dev_picks[album.track_album]
@@ -190,7 +182,7 @@ class SearchSong:
         embed.set_thumbnail(url=album.cover_url)
 
         return embed
-    
+
     @commands.command(name='upload_song', aliases=['upload_track'])
     async def upload_track(self, ctx, service=None):
         if not ctx.message.attachments:
@@ -199,14 +191,14 @@ class SearchSong:
             embed.set_image(url='https://cdn.discordapp.com/attachments/528057306185990175/529039264122404865/4f60da11f38df6119dea86b0fe2883a8.png')
             embed.set_footer(text=f"Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
             return await ctx.send(embed=embed)
-        
+
         async with aiohttp.ClientSession() as session:
             async with session.get(ctx.message.attachments[0].url) as resp:
                 raw = await resp.read()
 
         raw = io.BytesIO(raw)
 
-        raw=id3.ID3(raw)
+        raw = id3.ID3(raw)
 
         file_name = ', '.join(raw.get('TIT2').text)
 
@@ -239,7 +231,7 @@ class SearchSong:
         else:
             cmd = self.bot.get_command('search_song')
             await ctx.invoke(cmd, song_name="{} {}".format(service, file_name))
-        
+
 
 def setup(bot):
     bot.add_cog(SearchSong(bot))

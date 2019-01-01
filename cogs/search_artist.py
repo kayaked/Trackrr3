@@ -4,6 +4,7 @@ import cogs.mods.itunes as itunes
 import cogs.mods.base as base
 import random
 
+
 class ArtistSearch:
 
     def __init__(self, bot):
@@ -27,5 +28,6 @@ class ArtistSearch:
             embed.set_footer(text="Trackrr Music Search | Data pulled from Apple Music", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
             await ctx.send(embed=embed)
 
+
 def setup(bot):
-    bot.add_cog(ArtistSearch(bot))
+    bot.add_cog(ArtistSearch(bot))\

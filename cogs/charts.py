@@ -7,6 +7,7 @@ import json
 import shlex
 import asyncio
 
+
 class Charts(object):
 
     async def scrape(self):
@@ -17,11 +18,11 @@ class Charts(object):
             number_one_title = number_one_details.find('div', class_='chart-number-one__title').text.strip()
             number_one_artist = number_one_details.find('div', class_='chart-number-one__artist').text.strip()
             rest_details = soup.find_all('div', class_='chart-list-item__text-wrapper')[0:19]
-            results.append({'name':number_one_title, 'artist':number_one_artist})
+            results.append({'name': number_one_title, 'artist': number_one_artist})
             for result in rest_details:
                 result_name = result.find('span', class_='chart-list-item__title-text').text.strip()
                 result_artist = result.find('div', class_='chart-list-item__artist').text.strip()
-                results.append({'name':result_name, 'artist':result_artist})
+                results.append({'name': result_name, 'artist': result_artist})
             return results
         async with aiohttp.ClientSession() as session:
             async with session.get('https://www.billboard.com/charts/hot-100') as resp:
@@ -36,8 +37,8 @@ class Charts(object):
     def __init__(self, bot):
         self.bot = bot
         self.billboard = {
-            'songs':[],
-            'albums':[]
+            'songs': [],
+            'albums': []
         }
         print('Downloading Billboard Charts')
         self.bot.loop.create_task(self.scrape())
@@ -46,7 +47,7 @@ class Charts(object):
     @commands.cooldown(10, 4, commands.BucketType.guild)
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def charts(self, ctx, type="hot"):
-        if type == "albums" or type=="album":
+        if type == "albums" or type == "album":
             top_20 = self.billboard['albums']
             topAlbums = '\n'.join([f'{top_20.index(item)+1}. {item.get("artist", "N/A")} - {item.get("name", "Unknown")}' for item in top_20])
 
@@ -60,7 +61,7 @@ class Charts(object):
 
             await ctx.send(embed=embed)
         else:
-            
+
             top_20 = self.billboard['songs']
             topSongs = '\n'.join([f'{top_20.index(item)+1}. {item.get("artist", "N/A")} - {item.get("name", "Unknown")}' for item in top_20])
 
@@ -137,6 +138,7 @@ class Charts(object):
                 embed.add_field(name="Songs", value=topSongs)
 
                 await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Charts(bot))

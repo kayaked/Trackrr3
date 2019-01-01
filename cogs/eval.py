@@ -12,7 +12,8 @@ import getpass
 import time
 from contextlib import redirect_stdout
 import io
-import calendar, datetime
+import calendar
+import datetime
 
 try:
     import pyduktape
@@ -24,6 +25,7 @@ from os.path import isfile, join
 import datetime
 from collections import Counter
 
+
 def is_authorized():
     def predicate(ctx):
         # Thanks rewrite docs!
@@ -33,13 +35,14 @@ def is_authorized():
         ]
     return commands.check(predicate)
 
+
 class Eval(object):
 
     def __init__(self, bot):
         self.bot = bot
         self._last_result = None
         self.sessions = set()
-    
+
     def cleanup_code(self, content):
         """Automatically removes code blocks from the code."""
         # remove ```py\n```
@@ -75,7 +78,6 @@ class Eval(object):
             'author': ctx.message.author,
             'guild': ctx.message.guild,
             'message': ctx.message,
-            'self':super(),
             '_': self._last_result,
         }
 
@@ -157,12 +159,12 @@ class Eval(object):
             await ctx.send(f'```py\n{traceback.format_exc()}\n```')
         else:
             await ctx.message.add_reaction('✅')
-    
+
     @commands.command(name="embed")
     @is_authorized()
     async def embed(self, ctx, *, body):
-        body=self.cleanup_code(body)
-        
+        body = self.cleanup_code(body)
+
         try:
             body = json.loads(body)
         except:
@@ -175,6 +177,7 @@ class Eval(object):
             return await ctx.send(embed=discord.Embed.from_data(body))
         except:
             return await ctx.send("Not a valid embed index! (Missing fields, see leovoel embed visualizer)")
-                
+
+
 def setup(bot):
     bot.add_cog(Eval(bot))
