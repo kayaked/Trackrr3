@@ -1,6 +1,17 @@
+import aiohttp
+import datetime
+import random
+import io
+import traceback
+import copy
+import json
+
 import discord
 from discord.ext import commands
-import aiohttp
+import motor.motor_asyncio
+from mutagen import id3
+
+
 import cogs.mods.genius as genius
 import cogs.mods.soundcloud as soundcloud
 import cogs.mods.lastfm as lastfm
@@ -17,14 +28,7 @@ import cogs.mods.napster as napster
 import cogs.mods.pandora as pandora
 import cogs.mods.youtube as youtube
 import cogs.mods.base as base
-import datetime
-import random
-import motor.motor_asyncio
-import io
-import traceback
-from mutagen import id3
-import copy
-import json
+
 
 client = motor.motor_asyncio.AsyncIOMotorClient()
 db = client['Trackrr']
@@ -72,7 +76,10 @@ class SearchSong:
                     "TrackID": user_activity.track_id,
                     "SongAlbumCover": user_activity.album_cover_url
                 }
-                song_name = "{} {}".format(form['SongName'], form['SongArtist'])
+                
+                song_name = "{} {}".format(
+                    form['SongName'], form['SongArtist'])
+
                 await ctx.send("🎧 Here's what {} is currently listening to!".format(member.mention))
 
                 cmd = self.bot.get_command('search_song')
@@ -80,7 +87,7 @@ class SearchSong:
                 await ctx.invoke(cmd, song_name="{}{}".format(service_f, song_name))
 
             else:
-                await ctx.send('not spotify acitvity')
+                await ctx.send("you're not listening to spotify.")
 
         else:
             await ctx.send('Service invalid!')
@@ -93,7 +100,9 @@ class SearchSong:
             svc = None
         # Paginator for all services.
         if svc == 'all' and song_name:
-            current_service = await db.preferredsvc.find_one({'uid':ctx.author.id})
+           
+            current_service = await db.preferredsvc.find_one({'uid': ctx.author.id})
+            
             if not current_service:
                 current_service = 'spotify'
             else:
@@ -111,7 +120,9 @@ class SearchSong:
             emojis = []
             for service in self.services:
                 if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
-                    emojis.append([emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0])
+                    emojis.append([
+                        emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0])
+            
             for eji in emojis:
                 await m.add_reaction(eji)
             paging = True
@@ -137,19 +148,28 @@ class SearchSong:
             svc = svc.get('service', '')
             song_name = svc + ' ' + song_name
 
+        
         #####
         if not song_name or svc not in self.services or svc == 'list':
             services = copy.deepcopy(self.services)
             for service in services:
                 if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
-                    emoji = [emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0]
+                    emoji = [
+                        emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0]
+                    
                     services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
+           
+
             cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
             services.append('🎵 `all`')
             services.insert(0, f'`{cmdprefix}{ctx.invoked_with} <service/all> <*song name>`')
             services.append(f'To use this command without a service, run `{cmdprefix}prefs service <service>` to set a default search service.')
             embed = discord.Embed(title=f'List of available services for {cmdprefix}search_song', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
-            embed.set_footer(text="Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
+            
+            embed.set_footer(text="Trackrr Music Search", 
+                icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
+            
+
             return await ctx.send(embed=embed)
 
         async with ctx.channel.typing():
@@ -167,18 +187,31 @@ class SearchSong:
             embed.title = embed.title + f' <:{emoji.name}:{emoji.id}>'
         if isinstance(album.release_date, datetime.datetime):
             album.release_date = album.release_date.strftime('%B %-d, %Y')
-        embed.add_field(name='Name', value=album.name, inline=False)
-        embed.add_field(name='Artist(s)', value=album.artist, inline=False)
-        embed.add_field(name='Released', value=album.release_date, inline=False)
+        
+        embed.add_field(name='Name', 
+            value=album.name, inline=False)
+
+        embed.add_field(name='Artist(s)', 
+            value=album.artist, inline=False)
+        
+        embed.add_field(name='Released', 
+            value=album.release_date, inline=False)
 
         try:
             dev_info = dev_picks[album.track_album]
-            embed.add_field(name='Album', value=album.track_album)
-            embed.add_field(name="Dev Note", value=dev_info, inline=False)
+            embed.add_field(name='Album', 
+                value=album.track_album)
+            
+            embed.add_field(name="Dev Note", 
+                value=dev_info, inline=False)
+        
         except Exception:
-            embed.add_field(name='Album', value=album.track_album, inline=False)
+            embed.add_field(name='Album', 
+                value=album.track_album, inline=False)
 
-        embed.set_footer(text=f"Trackrr Music Search | Data pulled from {album.service}", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
+        embed.set_footer(text=f"Trackrr Music Search | Data pulled from {album.service}", 
+            icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
+        
         embed.set_thumbnail(url=album.cover_url)
 
         return embed
@@ -216,12 +249,21 @@ class SearchSong:
                 cover_url = 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true'
                 release_date = str(getattr(date, 'text', ['1970'])[0])
                 artist = ', '.join(raw.get('TPE1').text)
+            
+
             embed = self.song_format(TempTrack)
             embed.title = embed.title + ' 🖥'
             embed.set_footer(text="Trackrr Music Search | Data pulled from ID3 tags using Mutagen", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
+            
             file = {}
+            
+
             if any([key.startswith('APIC:') for key in list(raw.keys())]):
-                keyname = [key for key in list(raw.keys()) if key.startswith('APIC')][0]
+                
+                keyname = [key for key in list(
+                    raw.keys()) if key.startswith('APIC')][0]
+                
+
                 buffer = io.BytesIO(raw.get(keyname).data)
                 file['file'] = discord.File(buffer, filename="image.png")
                 embed.set_thumbnail(url="attachment://image.png")

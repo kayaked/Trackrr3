@@ -1,9 +1,11 @@
+from datetime import datetime
+
+import motor.motor_asyncio
 import discord
 from discord.ext import commands
-import cogs.mods.genius as genius
-from datetime import datetime
-import motor.motor_asyncio
 
+
+import cogs.mods.genius as genius
 import cogs.mods.spotify as spotify 
 
 client = motor.motor_asyncio.AsyncIOMotorClient()
@@ -13,6 +15,7 @@ db = client['Trackrr']
 class AudioInfomation:
     def __init__(self, bot):
         self.bot = bot
+
 
     @commands.command(name='analyze', aliases=['analyse', 'advanced_info', 'adv_info'])
     async def analyze(self, ctx):
@@ -121,7 +124,9 @@ class Lyrics:
             return abs(d1 - d2).days
 
         number_of_days = get_days_passed(before_date, after_date)
-        embed = discord.Embed(title="It has been {} days since YANDHI's announcement date.".format(number_of_days))
+        embed = discord.Embed(title="It has been {} days since YANDHI's announcement date.".format(number_of_days), 
+            description="Trust the process.")
+        
         await ctx.send(embed=embed)
 
     @commands.command(name='bobby')
@@ -145,11 +150,13 @@ class Lyrics:
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def lyrics(self, ctx, *, song_name):
         async with ctx.channel.typing():
+            
             lyrics, hit = await genius.get_song_lyrics(song_name)
             lyrics = getattr(lyrics, 'text', 'Lyrics not found.').strip('\n')
             lyrics_split = []
             lyrics_rawsplit = lyrics.split('\n')
             lyrics_segment = []
+            
             for line in lyrics_rawsplit:
                 if ('\n'.join(lyrics_segment) + '\n' + line).__len__() <= 2000:
                     lyrics_segment.append(line)
@@ -167,10 +174,16 @@ class Lyrics:
                 lyrics_split = lyrics_split[:3]
                 lyrics_split[-1] += f'[...]({hit.get("url", "")})'
                 lyrics_split[-1] = lyrics_split[-1][:2048]
+            
             for segment in lyrics_split:
-                embed = discord.Embed(title=hit.get('title', 'Trackrr') + ' by ' + hit.get('primary_artist', {}).get('name', 'N/A') + ' <:genius:528067300520362014>', description=segment, url=hit.get("url", "https://genius.com/"))
+                
+                embed = discord.Embed(title=hit.get('title', 'Trackrr') + ' by ' + hit.get('primary_artist', {}).get('name', 'N/A') + ' <:genius:528067300520362014>', 
+                    description=segment, url=hit.get("url", "https://genius.com/"))
+                
                 embed.set_thumbnail(url=hit.get('header_image_url', 'https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true'))
-                embed.set_footer(text=f"Trackrr Music Search | Data pulled from Genius", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
+                
+                embed.set_footer(text=f"Trackrr Music Search | Data pulled from Genius", 
+                    icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
                 await ctx.send(embed=embed)
 
 
@@ -188,15 +201,15 @@ class Producers:
             hit
             producers = []
             prev_elem = 'b'
+            
             # Scrapes the producer tags from Rap Genius's Producer tag library.
             # Since this page is made with user contributions (AND currently LOCKED from editing), it has many mistakes in its formatting.
             # It would be nice if I could do it all with one simple double line break split, but to improve accuracy I am not going to.
             # Report any bugs to Yak#7474 ASAP. ty for using trackrr!
+            
             for b in lyrics.find_all('b'):
                 producer = {'name': b.text, 'tags': []}
-                # print('----')
                 for tag in b.next_siblings:
-                    # print('[' + getattr(tag, 'text', '').strip() + ']', prev_elem)
                     if tag.name == "b" and prev_elem != 'b':
                         prev_elem = 'b'
                         break
@@ -217,7 +230,9 @@ class Producers:
                     final_producer = producer
                     break
             embed = discord.Embed(title=final_producer['name'].strip(), description='*' + '\n'.join(final_producer['tags']) + '*')
-            embed.set_footer(text=f"Trackrr Music Search | Data pulled from Genius", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
+            embed.set_footer(text=f"Trackrr Music Search | Data pulled from Genius", 
+                icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
+            
             await ctx.send(embed=embed)
 
 
