@@ -53,7 +53,7 @@ class SearchSong:
 
     # Basic support for search_playing
     @commands.command(name='search_playing', invoke_without_command=True)
-    async def search_playing(self, ctx, member: discord.Member, service="spotify"):
+    async def search_playing(self, ctx, member: discord.Member, service=''):
         # Section for how args are formatted.
         if isinstance(member, str) and not service:
             service = member
