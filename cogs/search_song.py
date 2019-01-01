@@ -61,7 +61,7 @@ class SearchSong:
         if not member:
             member = ctx.author
 
-        if service.lower() in self.services:
+        if service.lower() in self.services or not service:
             user_activity = member.activity
             if isinstance(user_activity, discord.Spotify):
 
@@ -76,13 +76,14 @@ class SearchSong:
                 await ctx.send("🎧 Here's what {} is currently listening to!".format(member.mention))
 
                 cmd = self.bot.get_command('search_song')
-                await ctx.invoke(cmd, song_name="all {}".format(song_name))
+                service_f = service + ' ' if service else ''
+                await ctx.invoke(cmd, song_name="{}{}".format(service_f, song_name))
 
             else:
                 await ctx.send('not spotify acitvity')
 
         else:
-            await ctx.send('service not specified or not a valid service.')
+            await ctx.send('Service invalid!')
 
     @commands.group(name='search_song', invoke_without_command=True, aliases=['search', 'search_track', 'song', 'track', 'tracksearch', 'searchtrack', 'searchsong', 'songsearch', 'song_search', 'track_search'])
     async def search_song(self, ctx, *, song_name=None):

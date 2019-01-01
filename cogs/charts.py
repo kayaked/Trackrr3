@@ -37,8 +37,8 @@ class Charts(object):
     def __init__(self, bot):
         self.bot = bot
         self.billboard = {
-            'songs':[],
-            'albums':[]
+            'songs': [],
+            'albums': []
         }
         print('Downloading Billboard Charts')
         self.bot.loop.create_task(self.scrape())
