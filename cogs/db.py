@@ -4,6 +4,7 @@ import motor.motor_asyncio
 import copy
 import random
 import datetime
+import urllib.parse
 
 client = motor.motor_asyncio.AsyncIOMotorClient()
 db = client['Trackrr']
@@ -132,20 +133,37 @@ soundcloud - Add a SoundCloud link to your profile view.
             if sc_link:
                 sc_link = f'[{sc_link}]({sc_link})'
             else:
-                sc_link = f'No preferred service set up. Try running `{cmdprefix}prefs service <service name>`.'
+                sc_link = f'No SoundCloud set up. Try running `{cmdprefix}prefs soundcloud <link>`.'
             embed = discord.Embed(
                 title=f'{ctx.author.display_name} - SoundCloud <:soundcloud:528067302659194880>',
                 description=sc_link,
                 timestamp=datetime.datetime.now()
             )
             embed.set_footer(
-                text="Trackrr Music Search",
+                text=f"Trackrr Music Search | Run '{cmdprefix}prefs soundcloud remove' to unlink your SoundCloud.",
                 icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png"
             )
             return await ctx.send(embed=embed)
+        if link == 'remove' or link == 'delete':
+            doc = await db.preferredsvc.find_one({'uid': ctx.author.id})
+            if not doc:
+                doc = {}
+            if doc.get('soundcloud'):
+                doc.pop('soundcloud')
+                await db.preferredsvc.find_one_and_replace({'uid': ctx.author.id}, doc)
+                return await ctx.send('Successfully removed your linked SoundCloud.')
+            else:
+                return await ctx.send(f'No SoundCloud set up. Try running `{cmdprefix}prefs soundcloud <link>`.')
+        link_parsed = urllib.parse.urlparse(link)
+        if any([
+            not link_parsed.scheme,
+            link_parsed.netloc != 'soundcloud.com',
+            not link_parsed.path
+        ]):
+            link = 'https://soundcloud.com/' + link
         if not await db.preferredsvc.find_one_and_update({'uid': ctx.author.id}, {'$set': {'soundcloud': link}}):
             await db.preferredsvc.insert_one({'uid': ctx.author.id, 'soundcloud': link})
-        await ctx.send(f'Set your SoundCloud to {link}')
+        await ctx.send(f'Set your SoundCloud to {link}.\nRun `{cmdprefix}prefs soundcloud remove` to unlink your SoundCloud.')
 
     @prefs.command(name='prefix')
     @commands.has_permissions(administrator=True)
