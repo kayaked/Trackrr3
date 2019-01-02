@@ -91,6 +91,8 @@ class DBFunctions:
         self.bot = bot
 
     @commands.group(name='prefs', invoke_without_command=True)
+    @commands.cooldown(3, 5, commands.BucketType.guild)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def prefs(self, ctx):
         cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
         description = f"""
