@@ -16,6 +16,8 @@ class Profiles:
         self.bot = bot
 
     @commands.command(name='profile')
+    @commands.cooldown(1, 2, commands.BucketType.user)
+    @commands.cooldown(5, 5, commands.BucketType.guild)
     async def profile(self, ctx, user: discord.Member=None):
         if not user:
             user = ctx.author

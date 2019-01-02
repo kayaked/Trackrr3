@@ -4,8 +4,6 @@ import datetime
 import traceback
 import random
 
-
-
 import discord
 from discord.ext import commands
 import motor.motor_asyncio
@@ -26,8 +24,6 @@ import cogs.mods.base as base
 import cogs.mods.napster as napster
 import cogs.mods.amazon as amazon
 import cogs.mods.bandcamp as bandcamp
-
-
 
 client = motor.motor_asyncio.AsyncIOMotorClient()
 db = client['Trackrr']
@@ -56,6 +52,7 @@ class SearchAlbum:
         ]
 
     @commands.group(name='search_album', invoke_without_command=True, aliases=['album', 'searchalbum', 'albumsearch', 'album_search'])
+    @commands.cooldown(5, 1, commands.BucketType.user)
     async def search_album(self, ctx, *, album_name=''):
         try:
             svc = album_name.split(' ')[0].lower()
@@ -84,12 +81,10 @@ class SearchAlbum:
                     emojis.append([emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0])
             for eji in emojis:
                 await m.add_reaction(eji)
-            
+
             paging = True
-            
 
-
-            while paging == True:
+            while paging is True:
                 try:
                     reaction, user = await self.bot.wait_for('reaction_add', check=lambda r, u: r.message.id == m.id and u.id == ctx.author.id and r.emoji in emojis and not u.bot, timeout=25)
                     try:
@@ -119,20 +114,23 @@ class SearchAlbum:
                 if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
                     emoji = [emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0]
                     services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
-            
+
             cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
             services.append('🎵 `all`')
             services.insert(0, f'`{cmdprefix}{ctx.invoked_with} <service/all> <*album name>`')
             services.append(f'To use this command without a service, run `{cmdprefix}prefs service <service>` to set a default search service.')
-            
 
-            embed = discord.Embed(title=f'List of available services for {cmdprefix}search_album', 
-                description='\n'.join(services), timestamp=datetime.datetime.now(), 
-                color=random.randint(0x000000, 0xffffff))
-            
-            embed.set_footer(text="Trackrr Music Search", 
-                icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
-            
+            embed = discord.Embed(
+                title=f'List of available services for {cmdprefix}search_album',
+                description='\n'.join(services), timestamp=datetime.datetime.now(),
+                color=random.randint(0x000000, 0xffffff)
+            )
+
+            embed.set_footer(
+                text="Trackrr Music Search",
+                icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png"
+            )
+
             return await ctx.send(embed=embed)
         ####
 
@@ -148,12 +146,11 @@ class SearchAlbum:
     def album_format(self, album):
         embed = discord.Embed(title=str(album.name), url=album.link, color=discord.Color(getattr(album, 'color', 0)), timestamp=datetime.datetime.today())
         if [emoji for emoji in self.bot.emojis if emoji.name == getattr(album, 'service', ' ').lower()]:
-            
+
             emoji = [
                 emoji for emoji in self.bot.emojis if emoji.name == album.service.lower()][0]
-            
+
             embed.title = embed.title + f' <:{emoji.name}:{emoji.id}>'
-        
 
         if isinstance(album.release_date, datetime.datetime):
             album.release_date = album.release_date.strftime('%B %-d, %Y')
