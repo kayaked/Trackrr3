@@ -65,7 +65,7 @@ class FavoriteSongs:
         service = embed.footer.text.rsplit(' ', 1)[-1]
         url = str(embed.url)
         structure = {
-            'uid':user.id,
+            'uid': user.id,
             'name': name,
             'cover_url': cover_url,
             'track_album': album,

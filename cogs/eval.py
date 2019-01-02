@@ -1,4 +1,6 @@
-import ast, sys, json
+import ast
+import sys
+import json
 import discord
 from discord.ext import commands
 import asyncio
@@ -62,10 +64,13 @@ class Eval(object):
     @commands.command(pass_context=True, hidden=True, name="js_eval")
     @is_authorized()
     async def _js_eval(self, ctx, *, body: str):
-        jsctx = pyduktape.DuktapeContext()
-        jsctx.set_globals(**globals(), ctx=ctx, bot=self.bot, channel=ctx.message.channel)
-        a = jsctx.eval_js(self.cleanup_code(body))
-        await ctx.send(f'```js\n{a}\n```')
+        try:
+            jsctx = pyduktape.DuktapeContext()
+            jsctx.set_globals(**globals(), ctx=ctx, bot=self.bot, channel=ctx.message.channel)
+            a = jsctx.eval_js(self.cleanup_code(body))
+            await ctx.send(f'```js\n{a}\n```')
+        except NameError:
+            await ctx.send('This instance of Trackrr is not eligible for JS evaluation.')
 
     @commands.command(pass_context=True, hidden=True, name='eval')
     @is_authorized()
@@ -113,6 +118,7 @@ class Eval(object):
             else:
                 self._last_result = ret
                 await ctx.send(f'```python\n{value}{ret}\n```')
+
     @commands.command(pass_context=True, hidden=True, name="load")
     @is_authorized()
     async def load(self, ctx, *, module=None):
