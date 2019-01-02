@@ -17,7 +17,7 @@ class ArtistSearch:
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def search_artist(self, ctx, *, artist_name=None):
         
-        if artist_name:
+        if not artist_name:
             cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
             embed = discord.Embed(color=random.randint(0x000000, 0xffffff), title=f'Help for `{cmdprefix}{ctx.invoked_with}`', description=f'`{cmdprefix}{ctx.invoked_with} <artist name>`')
             embed.set_image(url='https://i.gyazo.com/7d33394b56834ca32dc4c5db068806fe.png')
