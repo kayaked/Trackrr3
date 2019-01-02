@@ -26,7 +26,7 @@ import cogs.mods.amazon as amazon
 import cogs.mods.bandcamp as bandcamp
 import cogs.mods.napster as napster
 import cogs.mods.pandora as pandora
-#import cogs.mods.youtube as youtube
+import cogs.mods.youtube as youtube
 import cogs.mods.base as base
 
 
