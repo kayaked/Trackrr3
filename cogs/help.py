@@ -92,7 +92,7 @@ class Help:
             )
             embed.add_field(
                 name=f'`{cmdprefix}analyze`',
-                value='Gets sound and tune info about the current track your are listening to. (Spotify presence)'
+                value='Gets sound and tune info about the current track you are listening to. (Spotify presence)'
             )
         embed.set_footer(
             text="Trackrr Music Search | Created by exofeel#3333 X Yak#7474",

@@ -40,13 +40,20 @@ class Profiles:
                 soundcloud = prefs['soundcloud']
             else:
                 soundcloud = 'N/A'
+
+            if prefs.get('bio'):
+                bio = prefs['bio']
+            else:
+                bio = 'N/A'
         else:
             svc = 'N/A (not set)'
             soundcloud = 'N/A'
+            bio = 'N/A'
 
         embed = discord.Embed(
             title=f'{user} ({user.display_name})',
-            color=discord.Color(random.randint(0x000000, 0xffffff))
+            color=discord.Color(random.randint(0x000000, 0xffffff)),
+            timestamp=datetime.datetime.now()
         )
         embed.set_thumbnail(
             url=user.avatar_url
@@ -65,6 +72,15 @@ class Profiles:
             name=f'SoundCloud <:soundcloud:528067302659194880>',
             value=soundcloud,
             inline=False
+        )
+        embed.add_field(
+            name=f'Bio',
+            value=bio,
+            inline=False
+        )
+        embed.set_footer(
+            text=f"Trackrr Music Search",
+            icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png"
         )
         await ctx.send(embed=embed)
 
@@ -89,6 +105,7 @@ prefix - Change Trackrr's prefix for the current guild (`Administrator` only)
 __User - {ctx.author}__
 service - Add/change your preferred music source. This lets you use search commands without specifying a service.
 soundcloud - Add a SoundCloud link to your profile view.
+bio - Add a bio to your profile.
 
         """.strip()
         embed = discord.Embed(title='Trackrr Preferences 🛠', description=description, color=discord.Color(random.randint(0x000000, 0xffffff)))
@@ -117,6 +134,25 @@ soundcloud - Add a SoundCloud link to your profile view.
         if not await db.preferredsvc.find_one_and_update({'uid': ctx.author.id}, {'$set': {'service': svc}}):
             await db.preferredsvc.insert_one({'uid': ctx.author.id, 'service': svc})
         await ctx.send(f'Set your preferred service to {svc}')
+
+    @prefs.command(name='bio')
+    async def prefs_bio(self, ctx, *, bio=None):
+        cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
+        if not bio:
+            getbioraw = await db.preferredsvc.find_one({'uid': ctx.author.id})
+            getbio = copy.deepcopy(getattr(getbioraw, 'get', {}.get)('bio'))
+            if getbio:
+                pass
+            else:
+                getbio = f'No preferred service set up. Try running `{cmdprefix}prefs bio <bio>`.'
+            embed = discord.Embed(title=f'{ctx.author.display_name} - Profile Bio', description=f'```{getbio}```', timestamp=datetime.datetime.now())
+            embed.set_footer(text="Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
+            return await ctx.send(embed=embed)
+        if len(bio) > 150:
+            return await ctx.send('Bio too long! Please shorten it to under 150 characters.')
+        if not await db.preferredsvc.find_one_and_update({'uid': ctx.author.id}, {'$set': {'bio': bio}}):
+            await db.preferredsvc.insert_one({'uid': ctx.author.id, 'bio': bio})
+        await ctx.send(f'Set your profile bio to ```{bio}```')
 
     @prefs.command(name='soundcloud')
     async def prefs_soundcloud(self, ctx, link=None):
