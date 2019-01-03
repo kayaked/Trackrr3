@@ -111,5 +111,5 @@ class Help:
     @commands.command(name='ping', aliases=['latency', 'speed'])
     async def _ping(self, ctx):
         ping = round(self.bot.latency*1000)
-        embed = discord.Embed(title=f'Trackrr {ctx.invoked_with.capitalize()}', description=f'<a:ping_heartbeat:521565184188219392> {ping}ms', color=random.randint(0x000000, 0xffffff))
+        embed = discord.Embed(title=f'Trackrr {ctx.invoked_with.capitalize()}', description=f'<a:ping_heartbeat:528360411301412864> {ping}ms', color=random.randint(0x000000, 0xffffff))
         await ctx.send(embed=embed)
