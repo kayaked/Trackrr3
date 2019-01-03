@@ -27,8 +27,8 @@ class Help:
         self.bot = bot
 
     @commands.command(name='help', aliases=['support', 'info', 'botinfo'])
-    @commands.cooldown(10, 10, commands.BucketType.guild)
-    @commands.cooldown(3, 10, commands.BucketType.user)
+    @commands.cooldown(5, 5, commands.BucketType.guild)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def _help(self, ctx, page='1'):
         cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
         embed = discord.Embed(title='Trackrr 3', description='A Discord bot that searches music information anywhere, anytime.', timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
@@ -92,7 +92,7 @@ class Help:
             )
             embed.add_field(
                 name=f'`{cmdprefix}analyze`',
-                value='Gets sound and tune info about the current track your are listening to. (Spotify presence)'
+                value='Gets sound and tune info about the current track you are listening to. (Spotify presence)'
             )
         embed.set_footer(
             text="Trackrr Music Search | Created by exofeel#3333 X Yak#7474",
@@ -101,6 +101,8 @@ class Help:
         await ctx.send(embed=embed)
 
     @commands.command(name='faq', aliases=['questions'])
+    @commands.cooldown(5, 5, commands.BucketType.guild)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     async def _faq(self, ctx):
         embed = discord.Embed(title='Trackrr 3 - Frequently Asked Questions', description=faq, timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
         embed.set_footer(text="Trackrr Music Search | Created by exofeel#3333 X Yak#7474", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")

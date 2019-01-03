@@ -65,7 +65,7 @@ class FavoriteSongs:
         service = embed.footer.text.rsplit(' ', 1)[-1]
         url = str(embed.url)
         structure = {
-            'uid':user.id,
+            'uid': user.id,
             'name': name,
             'cover_url': cover_url,
             'track_album': album,
@@ -94,6 +94,8 @@ class FavoriteSongs:
         await ctx.send(f'{ctx.author.mention} OK, **{song.name} by {song.artist}** was removed from your favorites!', delete_after=2)
 
     @commands.command(name='favorites')
+    @commands.cooldown(5, 3, commands.BucketType.guild)
+    @commands.cooldown(1, 4, commands.BucketType.user)
     async def favorites_list(self, ctx, index=None):
         if index is None:
             favorite = await db.favorites.find({'uid': ctx.author.id}).to_list(length=None)
@@ -143,8 +145,8 @@ class FavoriteSongs:
     def favorites_embed_format(self, embed, favorites, page):
         for i in favorites[page*5:(page*5)+5]:
             service = i.service
-            if [emoji for emoji in self.bot.emojis if emoji.name == i.service.lower()]:
-                emoji = [emoji for emoji in self.bot.emojis if emoji.name == i.service.lower()][0]
+            if [emoji for emoji in self.bot.support_server.emojis if emoji.name == i.service.lower()]:
+                emoji = [emoji for emoji in self.bot.support_server.emojis if emoji.name == i.service.lower()][0]
                 service = f' <:{emoji.name}:{emoji.id}>'
             embed.add_field(name=f'{favorites.index(i)+1}. **{i.name}** by **{i.artist}**', value=f'{i.release_date} - on {i.track_album} - {service}', inline=False)
         if not favorites:
