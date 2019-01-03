@@ -145,8 +145,8 @@ class FavoriteSongs:
     def favorites_embed_format(self, embed, favorites, page):
         for i in favorites[page*5:(page*5)+5]:
             service = i.service
-            if [emoji for emoji in self.bot.emojis if emoji.name == i.service.lower()]:
-                emoji = [emoji for emoji in self.bot.emojis if emoji.name == i.service.lower()][0]
+            if [emoji for emoji in self.bot.support_server.emojis if emoji.name == i.service.lower()]:
+                emoji = [emoji for emoji in self.bot.support_server.emojis if emoji.name == i.service.lower()][0]
                 service = f' <:{emoji.name}:{emoji.id}>'
             embed.add_field(name=f'{favorites.index(i)+1}. **{i.name}** by **{i.artist}**', value=f'{i.release_date} - on {i.track_album} - {service}', inline=False)
         if not favorites:

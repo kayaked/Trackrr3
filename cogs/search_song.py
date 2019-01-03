@@ -121,9 +121,9 @@ class SearchSong:
                 m = await ctx.send(embed=await get_embed())
             emojis = []
             for service in self.services:
-                if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
+                if [emoji for emoji in self.bot.support_server.emojis if emoji.name == service.lower()]:
                     emojis.append([
-                        emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0])
+                        emoji for emoji in self.bot.support_server.emojis if emoji.name == service.lower()][0])
 
             for eji in emojis:
                 await m.add_reaction(eji)
@@ -157,9 +157,9 @@ class SearchSong:
         if not song_name or svc not in self.services or svc == 'list':
             services = copy.deepcopy(self.services)
             for service in services:
-                if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
+                if [emoji for emoji in self.bot.support_server.emojis if emoji.name == service.lower()]:
                     emoji = [
-                        emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0]
+                        emoji for emoji in self.bot.support_server.emojis if emoji.name == service.lower()][0]
 
                     services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
 
@@ -196,8 +196,8 @@ class SearchSong:
             color=discord.Color(getattr(album, 'color', 0)),
             timestamp=datetime.datetime.now()
         )
-        if [emoji for emoji in self.bot.emojis if emoji.name == getattr(album, 'service', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa').lower()]:
-            emoji = [emoji for emoji in self.bot.emojis if emoji.name == album.service.lower()][0]
+        if [emoji for emoji in self.bot.support_server.emojis if emoji.name == getattr(album, 'service', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa').lower()]:
+            emoji = [emoji for emoji in self.bot.support_server.emojis if emoji.name == album.service.lower()][0]
             embed.title = embed.title + f' <:{emoji.name}:{emoji.id}>'
         if isinstance(album.release_date, datetime.datetime):
             album.release_date = album.release_date.strftime('%B %-d, %Y')

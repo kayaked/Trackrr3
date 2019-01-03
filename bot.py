@@ -27,21 +27,25 @@ async def prefix_func(bot, msg):
         prefixes[-1] = prefix.get('prefix', '^')
     return prefixes
 
+
 class Reyackrr(commands.Bot):
     def __init__(self):
         self.token = Keys.DISCORDTOKEN
-        if debug_mode == True:
+        if debug_mode:
             super().__init__(command_prefix="?")
         else:
             super().__init__(command_prefix=prefix_func)
         self.remove_command('help')
+        self.support_server = None
 
     def run(self, token=None):
-        if not token: token=self.token
+        if not token:
+            token = self.token
         super().run(self.token)
 
     async def on_ready(self):
         print(splash)
+        self.support_server = self.get_guild(528055755044159499)
         for ext in [file[:-3] for file in os.listdir('cogs') if file.endswith('.py') and os.path.isfile(os.path.join('cogs', file))]:
             package = "{prefix}.{package}".format(prefix="cogs", package=ext)
             self.load_extension(package)

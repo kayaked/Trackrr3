@@ -80,8 +80,8 @@ class SearchAlbum:
                 m = await ctx.send(embed=await get_embed())
             emojis = []
             for service in self.services:
-                if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
-                    emojis.append([emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0])
+                if [emoji for emoji in ctx.guild.emojis if emoji.name == service.lower()]:
+                    emojis.append([emoji for emoji in ctx.guild.emojis if emoji.name == service.lower()][0])
             for eji in emojis:
                 await m.add_reaction(eji)
 
@@ -114,8 +114,8 @@ class SearchAlbum:
         if not album_name or svc not in self.services or svc == 'list':
             services = copy.deepcopy(self.services)
             for service in services:
-                if [emoji for emoji in self.bot.emojis if emoji.name == service.lower()]:
-                    emoji = [emoji for emoji in self.bot.emojis if emoji.name == service.lower()][0]
+                if [emoji for emoji in self.bot.support_server.emojis if emoji.name == service.lower()]:
+                    emoji = [emoji for emoji in self.bot.support_server.emojis if emoji.name == service.lower()][0]
                     services[services.index(service)] = f'<:{emoji.name}:{emoji.id}> ' + f'`{service}`'
 
             cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
@@ -153,10 +153,10 @@ class SearchAlbum:
             color=discord.Color(getattr(album, 'color', 0)),
             timestamp=datetime.datetime.today()
         )
-        if [emoji for emoji in self.bot.emojis if emoji.name == getattr(album, 'service', ' ').lower()]:
+        if [emoji for emoji in self.bot.support_server.emojis if emoji.name == getattr(album, 'service', ' ').lower()]:
 
             emoji = [
-                emoji for emoji in self.bot.emojis if emoji.name == album.service.lower()][0]
+                emoji for emoji in self.bot.support_server.emojis if emoji.name == album.service.lower()][0]
 
             embed.title = embed.title + f' <:{emoji.name}:{emoji.id}>'
 

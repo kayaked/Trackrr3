@@ -32,7 +32,7 @@ class Profiles:
         if prefs:
             if prefs.get('service'):
                 svc = prefs['service']
-                the_emoji = [emoji for emoji in self.bot.emojis if emoji.name == svc]
+                the_emoji = [emoji for emoji in self.bot.support_server.emojis if emoji.name == svc]
                 if the_emoji:
                     svc = str(the_emoji[0]) + f' ({svc})'
             else:
@@ -123,7 +123,7 @@ bio - Add a bio to your profile.
             current_service_raw = await db.preferredsvc.find_one({'uid': ctx.author.id})
             current_service = copy.deepcopy(getattr(current_service_raw, 'get', {}.get)('service'))
             if current_service:
-                the_emoji = [emoji for emoji in self.bot.emojis if emoji.name == current_service.lower()]
+                the_emoji = [emoji for emoji in self.bot.support_server.emojis if emoji.name == current_service.lower()]
                 if the_emoji:
                     current_service = str(the_emoji[0]) + f' **{current_service}**'
             else:
