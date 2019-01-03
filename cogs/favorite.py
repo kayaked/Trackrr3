@@ -79,7 +79,22 @@ class FavoriteSongs:
         await reaction.message.channel.send(f'{user.mention} **{name} by {artist}** was added to your favorites!', delete_after=2)
 
     @commands.command(name='remove_favorite')
-    async def remove_favorite(self, ctx, index):
+    async def remove_favorite(self, ctx, index=None):
+        if index is None:
+            cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
+            embed = discord.Embed(
+                color=random.randint(0x000000, 0xffffff),
+                title=f'Help for `{cmdprefix}{ctx.invoked_with}`',
+                description=f'`{cmdprefix}{ctx.invoked_with} [index]`'
+            )
+            embed.set_image(
+                url='https://i.gyazo.com/b9a1df7fc1f335052c28a20890054a98.png'
+            )
+            embed.set_footer(
+                text=f"Trackrr Music Search",
+                icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png"
+            )
+            return await ctx.send(embed=embed)
         favorite = await db.favorites.find({'uid': ctx.author.id}).to_list(length=None)
         try:
             song_raw = favorite[int(index)-1]

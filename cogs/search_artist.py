@@ -17,6 +17,8 @@ class ArtistSearch:
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def search_artist(self, ctx, *, artist_name=None):
 
+        # Sometimes doesnt work??? IDK
+
         if not artist_name:
             cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
             embed = discord.Embed(
