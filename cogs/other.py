@@ -18,19 +18,27 @@ class AudioInfomation:
     @commands.command(name='analyze', aliases=['analyse', 'advanced_info', 'adv_info'])
     async def analyze(self, ctx):
 
+
         # Discord User Information
         user_activity = ctx.author.activity
 
         if isinstance(user_activity, discord.Spotify) is True:
 
+
+
             # Discord provided Track Information
             track_name = user_activity.title
             track_cover_art = user_activity.album_cover_url
+
+            searching_message = await ctx.send('🔍 Analyzing {}'.format(track_name))
+
+
 
             track_info_get = await spotify.analyze_song(user_activity.track_id)
 
             # Create Local Dict for embed
             track_info = {}
+
 
             for key, value in track_info_get.items():
 
@@ -74,10 +82,22 @@ class AudioInfomation:
                     "liveness": "Liveness",
                     "speechiness": "Speechiness",
                     "loudness": "Loudness",
-                    "valence": "Valence",
+                    "valence": "Vibe",
                     "tempo": "BPM"
 
                 }
+
+                values_to_round = [
+
+                    "danceability",
+                    "energy",
+                    "instrumentalness",
+                    "liveness",
+                    "speechiness",
+                    "valence"
+
+                ]
+
 
                 if key in values_ignore:
                     pass
@@ -87,17 +107,73 @@ class AudioInfomation:
 
                     # Round BPM
 
+                    if key in values_to_round:
+
+                        val_readable = value * 100
+                        value = round(val_readable)
+
+                    else:
+                        pass
+
+
+                    # Pitch Classes for Keys
+                    pitch_classes = {
+
+                        -1: "No Key detected.",
+                        0: "C",
+                        1: "D♭",
+                        2: "D",
+                        3: "E♭",
+                        4: "E",
+                        5: "F",
+                        6: "G♭",
+                        7: "G",
+                        8: "A♭",
+                        9: "A",
+                        10: "B♭",
+                        11: "B"
+                    }
+
+
+                    modes = {
+
+                        -1: "No Mode Detected",
+                        0: "Minor",
+                        1: "Major"
+                    }
+
+                    ## Custom Funcs
                     def bpm(tempo):
                         return round(tempo)
 
                     if key_formatted == "BPM":
                         value = bpm(value)
+
+                    elif key_formatted == "Loudness":
+                        decibel = round(value)
+
+                        value = "{} dB".format(decibel)
+
+                    elif key_formatted == "Majorode":
+                        try:
+                            value = modes.get(value, value)
+                        except Exception:
+                            pass
+
+                    elif key_formatted == "Key":
+                        try:
+                            value = pitch_classes.get(value, value)
+                        except Exception:
+                            pass
+        
                     else:
                         pass
                     embed.add_field(name=value_aliases.get(key, key), value=value, inline=True)
 
             embed.add_field(name="Have no idea what these mean?", value="[Learn more about these values and what they mean](https://www.reddit.com/user/exofeel/comments/ab2aw3/trackrr_what_do_the_values_mean/)")
+            
             await ctx.send(embed=embed)
+            await searching_message.delete()
         else:
             await ctx.send('not listening to spotify.')
 
