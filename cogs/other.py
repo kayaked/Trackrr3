@@ -161,7 +161,6 @@ class Lyrics:
             lyrics_segment = []
 
             for line in range(0, len(lyrics_rawsplit)):
-                print(lyrics_rawsplit[line])
                 if ('\n'.join(lyrics_segment) + '\n' + lyrics_rawsplit[line]).__len__() <= 2000:
                     lyrics_segment.append(lyrics_rawsplit[line])
                 else:

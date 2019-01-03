@@ -112,7 +112,10 @@ class SearchSong:
                     song = await globals().get(current_service).search_song(' '.join(song_name.split(' ')[1:]))
                     embed = self.song_format(song)
                 except base.NotFound:
-                    embed = discord.Embed(title='Trackrr', description=f'No results found for `{current_service}`!')
+                    embed = discord.Embed(
+                        title='Trackrr',
+                        description=f'No results found for `{current_service}`!'
+                    )
                 return embed
             async with ctx.channel.typing():
                 m = await ctx.send(embed=await get_embed())
@@ -133,7 +136,10 @@ class SearchSong:
                     except:
                         pass
                     current_service = reaction.emoji.name
-                    await m.edit(embed=discord.Embed(title='Trackrr', description=f'🔍 Loading `{current_service}`...'))
+                    await m.edit(embed=discord.Embed(
+                        title='Trackrr',
+                        description=f'🔍 Loading `{current_service}`...')
+                    )
                     await m.edit(embed=await get_embed())
                 except:
                     paging = False
@@ -161,7 +167,12 @@ class SearchSong:
             services.append('🎵 `all`')
             services.insert(0, f'`{cmdprefix}{ctx.invoked_with} <service/all> <*song name>`')
             services.append(f'To use this command without a service, run `{cmdprefix}prefs service <service>` to set a default search service.')
-            embed = discord.Embed(title=f'List of available services for {cmdprefix}search_song', description='\n'.join(services), timestamp=datetime.datetime.now(), color=random.randint(0x000000, 0xffffff))
+            embed = discord.Embed(
+                title=f'List of available services for {cmdprefix}search_song',
+                description='\n'.join(services),
+                timestamp=datetime.datetime.now(),
+                color=random.randint(0x000000, 0xffffff)
+            )
 
             embed.set_footer(
                 text="Trackrr Music Search",
@@ -298,9 +309,13 @@ class SearchSong:
 
                 buffer = io.BytesIO(raw.get(keyname).data)
                 file['file'] = discord.File(buffer, filename="image.png")
-                embed.set_thumbnail(url="attachment://image.png")
+                embed.set_thumbnail(
+                    url="attachment://image.png"
+                )
             else:
-                embed.set_thumbnail(url='https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true')
+                embed.set_thumbnail(
+                    url='https://github.com/exofeel/Trackrr/blob/master/assets/UnknownCoverArt.png?raw=true'
+                )
             await ctx.send(**file, embed=embed)
         else:
             cmd = self.bot.get_command('search_song')

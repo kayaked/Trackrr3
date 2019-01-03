@@ -127,7 +127,7 @@ bio - Add a bio to your profile.
                 if the_emoji:
                     current_service = str(the_emoji[0]) + f' **{current_service}**'
             else:
-                current_service = f'No preferred service set up. Try running `{cmdprefix}prefs service <service name>`.'
+                current_service = f'❌ No preferred service set up. Try running `{cmdprefix}prefs service <service name>`.'
             embed = discord.Embed(title=f'{ctx.author.display_name} - Preferred Service', description=current_service, timestamp=datetime.datetime.now())
             embed.set_footer(text="Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
             return await ctx.send(embed=embed)
@@ -137,7 +137,7 @@ bio - Add a bio to your profile.
             return
         if not await db.preferredsvc.find_one_and_update({'uid': ctx.author.id}, {'$set': {'service': svc}}):
             await db.preferredsvc.insert_one({'uid': ctx.author.id, 'service': svc})
-        await ctx.send(f'Set your preferred service to {svc}')
+        await ctx.send(f'✅ Set your preferred service to {svc}')
 
     @prefs.command(name='bio')
     async def prefs_bio(self, ctx, *, bio=None):
@@ -148,15 +148,15 @@ bio - Add a bio to your profile.
             if getbio:
                 pass
             else:
-                getbio = f'No preferred service set up. Try running `{cmdprefix}prefs bio <bio>`.'
+                getbio = f'❌ You do not have a bio! Try running `{cmdprefix}prefs bio <bio>`.'
             embed = discord.Embed(title=f'{ctx.author.display_name} - Profile Bio', description=f'```{getbio}```', timestamp=datetime.datetime.now())
             embed.set_footer(text="Trackrr Music Search", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
             return await ctx.send(embed=embed)
         if len(bio) > 150:
-            return await ctx.send('Bio too long! Please shorten it to under 150 characters.')
+            return await ctx.send('❌ Bio too long! Please shorten it to under 150 characters.')
         if not await db.preferredsvc.find_one_and_update({'uid': ctx.author.id}, {'$set': {'bio': bio}}):
             await db.preferredsvc.insert_one({'uid': ctx.author.id, 'bio': bio})
-        await ctx.send(f'Set your profile bio to ```{bio}```')
+        await ctx.send(f'✅ Set your profile bio to ```{bio}```')
 
     @prefs.command(name='soundcloud')
     async def prefs_soundcloud(self, ctx, link=None):
@@ -173,7 +173,7 @@ bio - Add a bio to your profile.
             if sc_link:
                 sc_link = f'[{sc_link}]({sc_link})'
             else:
-                sc_link = f'No SoundCloud set up. Try running `{cmdprefix}prefs soundcloud <link>`.'
+                sc_link = f'❌ No SoundCloud set up. Try running `{cmdprefix}prefs soundcloud <link>`.'
             embed = discord.Embed(
                 title=f'{ctx.author.display_name} - SoundCloud <:soundcloud:528067302659194880>',
                 description=sc_link,
@@ -191,9 +191,9 @@ bio - Add a bio to your profile.
             if doc.get('soundcloud'):
                 doc.pop('soundcloud')
                 await db.preferredsvc.find_one_and_replace({'uid': ctx.author.id}, doc)
-                return await ctx.send('Successfully removed your linked SoundCloud.')
+                return await ctx.send('✅ Successfully removed your linked SoundCloud.')
             else:
-                return await ctx.send(f'No SoundCloud set up. Try running `{cmdprefix}prefs soundcloud <link>`.')
+                return await ctx.send(f'❌ No SoundCloud set up. Try running `{cmdprefix}prefs soundcloud <link>`.')
         link_parsed = urllib.parse.urlparse(link)
         if any([
             not link_parsed.scheme,
@@ -203,7 +203,7 @@ bio - Add a bio to your profile.
             link = 'https://soundcloud.com/' + link
         if not await db.preferredsvc.find_one_and_update({'uid': ctx.author.id}, {'$set': {'soundcloud': link}}):
             await db.preferredsvc.insert_one({'uid': ctx.author.id, 'soundcloud': link})
-        await ctx.send(f'Set your SoundCloud to {link}.\nRun `{cmdprefix}prefs soundcloud remove` to unlink your SoundCloud.')
+        await ctx.send(f'✅ Set your SoundCloud to {link}.\nRun `{cmdprefix}prefs soundcloud remove` to unlink your SoundCloud.')
 
     @prefs.command(name='prefix')
     @commands.has_permissions(administrator=True)
@@ -211,7 +211,7 @@ bio - Add a bio to your profile.
         cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
         if not prefix:
             if cmdprefix == '^':
-                current_prefix = f'This server does not have a custom prefix set up! Try running `{cmdprefix}prefs prefix <prefix>`.'
+                current_prefix = f'❌ This server does not have a custom prefix set up! Try running `{cmdprefix}prefs prefix <prefix>`.'
             else:
                 current_prefix = f'This guild\'s current custom prefix is `{cmdprefix}`.'
             embed = discord.Embed(title=f'{ctx.guild.name} - Prefix', description=current_prefix, timestamp=datetime.datetime.now())
@@ -219,7 +219,7 @@ bio - Add a bio to your profile.
             return await ctx.send(embed=embed)
         if not await db.preferredsvc.find_one_and_update({'gid': ctx.guild.id}, {'$set': {'prefix': prefix}}):
             await db.preferredsvc.insert_one({'gid': ctx.guild.id, 'prefix': prefix})
-        await ctx.send(f'Set your guild\'s prefix to {prefix}')
+        await ctx.send(f'✅ Set your guild\'s prefix to {prefix}')
 
 
 def setup(bot):

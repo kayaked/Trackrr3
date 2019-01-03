@@ -94,6 +94,8 @@ class FavoriteSongs:
         await ctx.send(f'{ctx.author.mention} OK, **{song.name} by {song.artist}** was removed from your favorites!', delete_after=2)
 
     @commands.command(name='favorites')
+    @commands.cooldown(5, 3, commands.BucketType.guild)
+    @commands.cooldown(1, 4, commands.BucketType.user)
     async def favorites_list(self, ctx, index=None):
         if index is None:
             favorite = await db.favorites.find({'uid': ctx.author.id}).to_list(length=None)

@@ -71,7 +71,10 @@ class SearchAlbum:
                     album = await globals().get(current_service).search_album(' '.join(album_name.split(' ')[1:]))
                     embed = self.album_format(album)
                 except base.NotFound:
-                    embed = discord.Embed(title='Trackrr', description=f'No results found for `{current_service}`!')
+                    embed = discord.Embed(
+                        title='Trackrr',
+                        description=f'❌ No results found for `{current_service}`!'
+                    )
                 return embed
             async with ctx.channel.typing():
                 m = await ctx.send(embed=await get_embed())
@@ -121,7 +124,7 @@ class SearchAlbum:
             services.append(f'To use this command without a service, run `{cmdprefix}prefs service <service>` to set a default search service.')
 
             embed = discord.Embed(
-                title=f'List of available services for {cmdprefix}search_album',
+                title=f'🔍 List of available services for {cmdprefix}search_album',
                 description='\n'.join(services), timestamp=datetime.datetime.now(),
                 color=random.randint(0x000000, 0xffffff)
             )
@@ -139,12 +142,17 @@ class SearchAlbum:
             try:
                 album = await globals().get(svc).search_album(' '.join(album_name.split(' ')[1:]))
             except base.NotFound:
-                return await ctx.send(f'Result not found on {svc}!')
+                return await ctx.send(f'❌ Result not found on {svc}!')
             embed = self.album_format(album)
             await ctx.send(embed=embed)
 
     def album_format(self, album):
-        embed = discord.Embed(title=str(album.name), url=album.link, color=discord.Color(getattr(album, 'color', 0)), timestamp=datetime.datetime.today())
+        embed = discord.Embed(
+            title=str(album.name),
+            url=album.link,
+            color=discord.Color(getattr(album, 'color', 0)),
+            timestamp=datetime.datetime.today()
+        )
         if [emoji for emoji in self.bot.emojis if emoji.name == getattr(album, 'service', ' ').lower()]:
 
             emoji = [
@@ -154,12 +162,33 @@ class SearchAlbum:
 
         if isinstance(album.release_date, datetime.datetime):
             album.release_date = album.release_date.strftime('%B %-d, %Y')
-        embed.add_field(name='Name', value=album.name, inline=False)
-        embed.add_field(name='Artist(s)', value=album.artist, inline=False)
-        embed.add_field(name='Released', value=album.release_date, inline=False)
-        embed.add_field(name='Track List', value='\n'.join(album.track_list).replace('*', r'\*') if album.track_list else 'Unknown', inline=False)
-        embed.set_footer(text=f"Trackrr Music Search | Data pulled from {album.service}", icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png")
-        embed.set_thumbnail(url=album.cover_url)
+        embed.add_field(
+            name='Name',
+            value=album.name,
+            inline=False
+        )
+        embed.add_field(
+            name='Artist(s)',
+            value=album.artist,
+            inline=False
+        )
+        embed.add_field(
+            name='Released',
+            value=album.release_date,
+            inline=False
+        )
+        embed.add_field(
+            name='Track List',
+            value='\n'.join(album.track_list).replace('*', r'\*') if album.track_list else 'Unknown',
+            inline=False
+        )
+        embed.set_footer(
+            text=f"Trackrr Music Search | Data pulled from {album.service}",
+            icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png"
+        )
+        embed.set_thumbnail(
+            url=album.cover_url
+        )
 
         return embed
 
