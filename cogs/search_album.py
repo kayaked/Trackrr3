@@ -2,6 +2,7 @@ import aiohttp
 import copy
 import datetime
 import traceback
+import json
 import random
 
 import discord
@@ -27,6 +28,7 @@ import cogs.mods.bandcamp as bandcamp
 
 client = motor.motor_asyncio.AsyncIOMotorClient()
 db = client['Trackrr']
+dev_picks = json.load(open('dev_notes.json', 'r', encoding='utf-8'))
 
 
 class SearchAlbum:
@@ -182,6 +184,15 @@ class SearchAlbum:
             value='\n'.join(album.track_list).replace('*', r'\*') if album.track_list else 'Unknown',
             inline=False
         )
+        try:
+            dev_info = dev_picks[album.name]
+            embed.add_field(
+                name="Dev Note",
+                value=dev_info,
+                inline=False
+            )
+        except:
+            pass
         embed.set_footer(
             text=f"Trackrr Music Search | Data pulled from {album.service}",
             icon_url="https://media.discordapp.net/attachments/452763485743349761/452763575878942720/TrackrrLogo.png"
