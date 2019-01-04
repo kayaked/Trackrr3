@@ -1,0 +1,12 @@
+motor==2.0.0
+discord.py==1.0.0a1590+g860d6a9
+Faker==0.9.0
+aiohttp==3.4.4
+mutagen==1.42.0
+requests==2.20.0
+pyfy==1.0.1
+lxml==4.2.5
+beautifulsoup4==4.7.0
+python_dateutil==2.7.5
+discord==0.0.2
+pyduktape==0.0.6
