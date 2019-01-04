@@ -28,6 +28,7 @@ class AudioInfomation:
 
             # Discord provided Track Information
             track_name = user_activity.title
+            track_artist = user_activity.artist
             track_cover_art = user_activity.album_cover_url
 
             searching_message = await ctx.send('🔍 Analyzing {}'.format(track_name))
@@ -58,6 +59,7 @@ class AudioInfomation:
 
             embed = discord.Embed(title="Audio Analysis", description="Data provided by the Spotify Web API")
             embed.add_field(name='Track Name', value=track_name, inline=False)
+            embed.add_field(name='Artist', value=track_artist)
             embed.set_thumbnail(url=track_cover_art)
 
             # I'm gonna try somethin crazy
