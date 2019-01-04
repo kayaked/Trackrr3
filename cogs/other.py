@@ -56,7 +56,8 @@ class AudioInfomation:
                 else:
                     pass
 
-            embed = discord.Embed(title="Audio Analysis", description="Here is detailed information about the track  " + track_name)
+            embed = discord.Embed(title="Audio Analysis", description="Data provided by the Spotify Web API")
+            embed.add_field(name='Track Name', value=track_name, inline=False)
             embed.set_thumbnail(url=track_cover_art)
 
             # I'm gonna try somethin crazy
