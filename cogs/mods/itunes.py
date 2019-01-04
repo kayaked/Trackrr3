@@ -40,8 +40,9 @@ async def search_artist(artist):
     async with aiohttp.ClientSession() as session:
         url = construct_link(type='artist', search_term=artist)
         async with session.get(url) as resp:
-            resp_json = await resp.json(content_type=None)
-
+            #resp_json = await resp.json(content_type=None)
+            resp_text = await resp.text()
+            resp_json = json.load(resp_text)
         artist_info = {
             'name': 'Unknown Artist',
             'description': 'No info.',
@@ -54,7 +55,7 @@ async def search_artist(artist):
 
         results = resp_json.get('results', [])
         print(results)
-        
+
         if not results:
             raise NotFound
 
