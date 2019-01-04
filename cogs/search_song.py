@@ -54,6 +54,16 @@ class SearchSong:
             'youtube'
         ]
 
+
+
+
+    @commands.command(name='current')
+    async def current(self, ctx, service='spotify'):
+        
+
+        cmd = self.bot.get_command('search_playing')
+        await ctx.invoke(cmd, ctx.author, service)
+
     # Basic support for search_playing
     @commands.command(name='search_playing', invoke_without_command=True)
     async def search_playing(self, ctx, member: discord.Member, service=''):
