@@ -53,7 +53,8 @@ async def search_artist(artist):
         }
 
         results = resp_json.get('results', [])
-
+        print(results)
+        
         if not results:
             raise NotFound
 
