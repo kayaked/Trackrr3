@@ -29,10 +29,12 @@ class FavoriteSongs:
     def __init__(self, bot):
         self.bot = bot
 
-    def is_favorite_reaction(self, reaction):
+    def is_favorite_reaction(self, reaction, user):
         if reaction.message.author.id != self.bot.user.id:
             return False
-        if str(reaction.emoji) != '❤':
+        if user.bot:
+            return False
+        if str(reaction.emoji) not in ['❤', '♥']:
             return False
         msg = reaction.message
         if not msg.embeds:
@@ -52,7 +54,7 @@ class FavoriteSongs:
         return True
 
     async def on_reaction_add(self, reaction, user):
-        if not self.is_favorite_reaction(reaction):
+        if not self.is_favorite_reaction(reaction, user):
             return
         msg = reaction.message
         embed = msg.embeds[0]
