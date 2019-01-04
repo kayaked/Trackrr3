@@ -100,6 +100,16 @@ class Help:
         )
         await ctx.send(embed=embed)
 
+    @commands.command(name='prefix')
+    @commands.cooldown(5, 5, commands.BucketType.guild)
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def prefix(self, ctx):
+        cmdprefix = (await self.bot.command_prefix(self.bot, ctx.message))[-1]
+        embed = discord.Embed(title="This server's prefix is ``{}``".format(cmdprefix))
+        await ctx.send(embed=embed)
+
+    
+
     @commands.command(name='faq', aliases=['questions'])
     @commands.cooldown(5, 5, commands.BucketType.guild)
     @commands.cooldown(1, 5, commands.BucketType.user)
