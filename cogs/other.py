@@ -75,7 +75,7 @@ class AudioInfomation:
 
                 value_aliases = {
 
-                    "duration_ms": "Duration (in ms)",
+                    "duration_ms": "Duration",
                     "key": "Key",
                     "mode": "Mode",
                     "time_signature": "Time Signature",
@@ -137,7 +137,6 @@ class AudioInfomation:
                         11: "B"
                     }
 
-
                     modes = {
 
                         -1: "No Mode Detected",
@@ -145,12 +144,20 @@ class AudioInfomation:
                         1: "Major"
                     }
 
-                    ## Custom Funcs
+                    # Custom Funcs
                     def bpm(tempo):
                         return round(tempo)
 
+                    def ms_to_timestamp(ms):
+                        return (ms/1000) + 18000
+
                     if key_formatted == "BPM":
                         value = bpm(value)
+
+                    elif key_formatted == 'Duration':
+                        timestamp = datetime.fromtimestamp(ms_to_timestamp(value))
+                        timestamp_formatted = timestamp.strftime('%-M:%S')
+                        value = timestamp_formatted
 
                     elif key_formatted == "Loudness":
                         decibel = round(value)
@@ -168,13 +175,13 @@ class AudioInfomation:
                             value = pitch_classes.get(value, value)
                         except Exception:
                             pass
-        
+
                     else:
                         pass
                     embed.add_field(name=value_aliases.get(key, key), value=value, inline=True)
 
             embed.add_field(name="Have no idea what these mean?", value="[Learn more about these values and what they mean](https://www.reddit.com/user/exofeel/comments/ab2aw3/trackrr_what_do_the_values_mean/)")
-            
+
             await ctx.send(embed=embed)
             await searching_message.delete()
         else:
