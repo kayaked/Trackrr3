@@ -108,8 +108,6 @@ class Help:
         embed = discord.Embed(title="This server's prefix is ``{}``".format(cmdprefix))
         await ctx.send(embed=embed)
 
-    
-
     @commands.command(name='faq', aliases=['questions'])
     @commands.cooldown(5, 5, commands.BucketType.guild)
     @commands.cooldown(1, 5, commands.BucketType.user)

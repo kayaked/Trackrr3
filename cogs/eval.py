@@ -14,6 +14,7 @@ import getpass
 import time
 from contextlib import redirect_stdout
 import io
+import shlex
 import calendar
 import datetime
 
@@ -24,8 +25,8 @@ except Exception:
 from os import listdir
 from os.path import isfile, join
 # to expose to the eval command
-import datetime
 from collections import Counter
+from cogs.mods.keys import Keys
 
 
 def is_authorized():
@@ -133,6 +134,22 @@ class Eval(object):
             await ctx.send(f'```py\n{traceback.format_exc()}\n```')
         else:
             await ctx.message.add_reaction('✅')
+
+    @commands.command(name='api')
+    @is_authorized()
+    async def api(self, ctx, endpoint, *, args=None):
+        args_d = {}
+        if args:
+            args = shlex.split(args)
+            args = [arg for arg in args if '=' in arg]
+            for v in args:
+                vspl = v.split('=', 1)
+                args_d[vspl[0]] = vspl[-1]
+        args_d['key'] = Keys.OWNERKEY
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f'http://localhost:8080/{endpoint}', params=args_d, timeout=5) as resp:
+                jso = await resp.json()
+        await ctx.send(f'```json\n{json.dumps(jso, indent=2)}```')
 
     @commands.command(pass_context=True, hidden=True, name="unload")
     @is_authorized()
