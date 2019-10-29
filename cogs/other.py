@@ -193,11 +193,9 @@ class Lyrics:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='yandhi')
+    @commands.command(name='yandhi', aliases=['jik', 'jesusisking'])
     async def yandhi(self, ctx):
-
-        # release YANDHI kanye
-        before_date = datetime(2018, 9, 28, 0, 0)
+        before_date = datetime(2019, 10, 25, 0, 0)
         after_date = datetime.now()
 
         def get_days_passed(before, after):
@@ -207,7 +205,7 @@ class Lyrics:
 
         number_of_days = get_days_passed(before_date, after_date)
         embed = discord.Embed(
-            title="It has been {} days since YANDHI's announcement date.".format(number_of_days),
+            title="It has been {} days since JESUS IS KING was released.".format(number_of_days),
             description="Trust the process."
         )
 
